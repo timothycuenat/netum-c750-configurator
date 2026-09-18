@@ -5,9 +5,11 @@ Scan a setting. That’s it.
 No install. No driver. Open the file, pick an option, scan the barcode on screen.
 
 <p align="center">
-  <a href="https://timothycuenat.github.io/netum-c750-configurator/">
+  <a href="https://timothycuenat.github.io/netum-c750-configurator" target="_blank" rel="noopener noreferrer">
     <img src="docs/open.png" alt="Try it online" width="340">
   </a>
+  <br>
+  <a href="https://github.com/timothycuenat/netum-c750-configurator/releases/latest/download/Netum_C750_Configurator.html">Download the HTML file</a>
 </p>
 
 <p align="center">

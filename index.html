@@ -2,12 +2,915 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Netum C750 — Configurator</title>
-  <meta http-equiv="refresh" content="0; url=Netum_C750_Configurator.html">
-  <link rel="canonical" href="Netum_C750_Configurator.html">
-  <script>location.replace("Netum_C750_Configurator.html");</script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2318181b'/%3E%3Cg fill='%23fafafa'%3E%3Crect x='7' y='8' width='2' height='16'/%3E%3Crect x='11' y='8' width='1.5' height='16'/%3E%3Crect x='14' y='8' width='3' height='16'/%3E%3Crect x='19' y='8' width='1.5' height='16'/%3E%3Crect x='22' y='8' width='2.5' height='16'/%3E%3Crect x='26' y='8' width='1' height='16'/%3E%3C/g%3E%3C/svg%3E">
+  <style>
+:root {
+  --background: 240 5% 96%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --muted: 240 5% 93%;
+  --muted-foreground: 240 4% 40%;
+  --border: 240 6% 86%;
+  --input: 240 6% 86%;
+  --primary: 240 6% 10%;
+  --primary-foreground: 0 0% 98%;
+  --accent: 240 5% 92%;
+  --ring: 240 5.9% 10%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 98%;
+  --sidebar: 240 6% 94%;
+  --panel-bg: 240 8% 93%;
+  --header-bg: 0 0% 100%;
+  --option-bg: 240 6% 97%;
+  --selected: 220 14% 88%;
+  --selected-border: 220 12% 72%;
+  --radius: 0.75rem;
+  --panel: 360px;
+  --sidebar-w: 240px;
+  --header: 56px;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 3px rgb(0 0 0 / 0.06);
+}
+.dark {
+  --background: 240 10% 6%;
+  --foreground: 0 0% 98%;
+  --card: 240 8% 11%;
+  --card-foreground: 0 0% 98%;
+  --muted: 240 6% 16%;
+  --muted-foreground: 240 5% 70%;
+  --border: 240 5% 20%;
+  --input: 240 5% 22%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --accent: 240 5% 18%;
+  --ring: 240 5% 84%;
+  --sidebar: 240 10% 8%;
+  --panel-bg: 240 9% 8%;
+  --header-bg: 240 10% 8%;
+  --option-bg: 240 8% 14%;
+  --selected: 220 12% 22%;
+  --selected-border: 220 10% 38%;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+h1,h2,h3 { letter-spacing: -0.025em; font-weight: 600; margin: 0; }
+.header {
+  position: sticky; top: 0; z-index: 40; height: var(--header);
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px; border-bottom: 1px solid hsl(var(--border));
+  background: hsl(var(--header-bg));
+  box-shadow: var(--shadow);
+}
+.brand { display: flex; align-items: center; gap: 10px; min-width: 220px; }
+.logo {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: hsl(var(--primary)); color: hsl(var(--primary-foreground));
+  display: grid; place-items: center; overflow: hidden; flex-shrink: 0;
+}
+.logo svg { display: block; width: 28px; height: 28px; }
+.brand small { display: block; color: hsl(var(--muted-foreground)); font-size: 11px; font-weight: 400; }
+.search {
+  flex: 1; max-width: 420px; position: relative;
+}
+.search input {
+  width: 100%; height: 36px; padding: 0 36px 0 34px; border-radius: 8px;
+  border: 1px solid hsl(var(--input)); background: hsl(var(--muted));
+  outline: none;
+}
+.search input:focus { box-shadow: 0 0 0 3px hsl(var(--ring) / 0.15); border-color: hsl(var(--ring)); background: hsl(var(--card)); }
+.search > svg { position: absolute; left: 10px; top: 9px; color: hsl(var(--muted-foreground)); pointer-events: none; }
+.search-clear {
+  position: absolute; right: 4px; top: 4px; width: 28px; height: 28px; padding: 0;
+  border: 0; border-radius: 6px; background: transparent; cursor: pointer;
+  color: hsl(var(--muted-foreground)); display: none; align-items: center; justify-content: center;
+}
+.search-clear:hover { background: hsl(var(--accent)); color: hsl(var(--foreground)); }
+.search.has-query .search-clear { display: inline-flex; }
+.header-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.btn {
+  height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid hsl(var(--border));
+  background: hsl(var(--card)); cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.03);
+}
+.btn:hover { background: hsl(var(--accent)); }
+.btn-primary { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border-color: transparent; box-shadow: none; }
+.btn-primary:hover { opacity: 0.92; background: hsl(var(--primary)); }
+.btn-ghost { border-color: transparent; background: transparent; box-shadow: none; }
+.btn-danger { color: hsl(var(--destructive)); }
+.layout { display: grid; grid-template-columns: var(--sidebar-w) 1fr var(--panel); min-height: calc(100vh - var(--header)); }
+.sidebar {
+  border-right: 1px solid hsl(var(--border)); padding: 12px; position: sticky; top: var(--header);
+  height: calc(100vh - var(--header)); overflow: auto;
+  background: hsl(var(--sidebar));
+  display: flex; flex-direction: column; gap: 6px;
+}
+.nav-btn {
+  width: 100%; text-align: left; padding: 8px 10px; border: 0; background: transparent;
+  border-radius: 8px; cursor: pointer; color: hsl(var(--muted-foreground)); display: flex; justify-content: space-between;
+}
+.nav-btn:hover { background: hsl(var(--card) / 0.7); color: hsl(var(--foreground)); }
+.nav-btn.active {
+  background: hsl(var(--card)); color: hsl(var(--foreground));
+  box-shadow: var(--shadow);
+  font-weight: 600;
+}
+.main { padding: 24px 28px 80px; min-width: 0; }
+.page-title { font-size: 24px; margin-bottom: 4px; }
+.lede { color: hsl(var(--muted-foreground)); margin-bottom: 20px; }
+.card {
+  background: hsl(var(--card)); border: 1px solid hsl(var(--border));
+  border-radius: var(--radius); padding: 16px; margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.card h3 { font-size: 15px; margin-bottom: 4px; }
+.note { color: hsl(var(--muted-foreground)); font-size: 12.5px; margin: 0 0 12px; }
+.options {
+  display: grid; gap: 6px; max-height: 380px; overflow: auto; margin-top: 10px;
+  padding: 6px; border-radius: 10px;
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border) / 0.7);
+}
+.opt {
+  display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center;
+  padding: 8px 10px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; text-align: left;
+  background: transparent; width: 100%;
+}
+.opt:hover { background: hsl(var(--card) / 0.7); }
+.opt.active {
+  background: hsl(240 8% 13%);
+  color: hsl(0 0% 98%);
+  border-color: transparent;
+  font-weight: 500;
+}
+.opt.active .badge {
+  background: transparent;
+  border-color: hsl(0 0% 100% / 0.2);
+  color: hsl(0 0% 82%);
+}
+.opt.active .badge.def {
+  background: hsl(0 0% 98%);
+  color: hsl(240 8% 13%);
+  border-color: transparent;
+}
+.opt.active .badge.ret {
+  background: hsl(214 30% 24%);
+  border-color: transparent;
+  color: hsl(210 40% 90%);
+}
+.opt.active .badge.dang {
+  background: hsl(0 50% 22%);
+  border-color: transparent;
+  color: hsl(0 90% 90%);
+}
+.opt .note {
+  color: hsl(240 5% 32%);
+  font-weight: 400;
+}
+.opt.active .note {
+  color: hsl(240 6% 78%);
+}
+.dark .opt.active {
+  background: hsl(0 0% 96%);
+  color: hsl(240 8% 12%);
+}
+.dark .opt.active .badge {
+  border-color: hsl(240 6% 12% / 0.18);
+  color: hsl(240 5% 35%);
+}
+.dark .opt.active .badge.def {
+  background: hsl(240 8% 12%);
+  color: hsl(0 0% 98%);
+}
+.opt .meta { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.badge {
+  font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 999px; border: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground)); background: hsl(var(--card));
+}
+.badge.def { background: hsl(var(--foreground)); color: hsl(var(--background)); border-color: transparent; }
+.badge.ret { border-color: hsl(215 20% 65%); color: hsl(215 25% 40%); background: hsl(214 32% 96%); }
+.badge.dang { color: hsl(var(--destructive)); border-color: hsl(var(--destructive) / 0.4); background: hsl(0 86% 97%); }
+.dark .badge.ret { background: hsl(215 25% 18%); color: hsl(214 40% 78%); }
+.dark .badge.dang { background: hsl(0 40% 16%); }
+.barcode-stage {
+  margin-top: 12px; background: #fff; color: #111; border-radius: 10px; padding: 16px 16px 12px;
+  display: grid; place-items: center; min-height: 140px; border: 1px dashed #d4d4d8;
+  box-shadow: inset 0 0 0 6px #fafafa;
+}
+.barcode-stage svg, .barcode-stage img { max-width: 100%; height: auto; }
+.human { margin-top: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px; color: #3f3f46; word-break: break-all; text-align: center; }
+.scan-tip { font-size: 11px; color: #71717a; margin-top: 6px; text-align: center; }
+.panel {
+  border-left: 1px solid hsl(var(--border)); padding: 14px; position: sticky; top: var(--header);
+  height: calc(100vh - var(--header)); overflow: auto; background: hsl(var(--panel-bg));
+}
+.panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: hsl(var(--muted-foreground)); margin-bottom: 10px; }
+.capture {
+  width: 100%; min-height: 72px; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid hsl(var(--input)); background: hsl(var(--card));
+  outline: none; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  box-shadow: var(--shadow);
+}
+.capture:focus { box-shadow: 0 0 0 3px hsl(var(--ring) / 0.18); border-color: hsl(var(--ring)); }
+.capture.armed { box-shadow: 0 0 0 3px hsl(142 70% 45% / 0.25); border-color: hsl(142 55% 36%); }
+.result-box {
+  margin-top: 10px; padding: 10px; border-radius: 10px; background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px;
+  word-break: break-all; min-height: 44px; user-select: text;
+}
+.result-box.flash { animation: flash 0.6s ease; }
+@keyframes flash { from { background: hsl(142 70% 45% / 0.25); } }
+.kvs { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.history { list-style: none; padding: 0; margin: 8px 0 0; }
+.history li {
+  padding: 8px; border-radius: 8px; border: 1px solid hsl(var(--border)); margin-bottom: 6px;
+  background: hsl(var(--card));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px;
+  cursor: pointer;
+}
+.history li:hover { border-color: hsl(var(--ring) / 0.35); }
+.tools { display: grid; gap: 10px; }
+.field { display: grid; gap: 4px; }
+.field label { font-size: 12px; color: hsl(var(--muted-foreground)); }
+.field input, .field select, .field textarea {
+  height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid hsl(var(--input));
+  background: hsl(var(--muted));
+}
+.field input:focus, .field select:focus, .field textarea:focus { background: hsl(var(--card)); outline: none; box-shadow: 0 0 0 3px hsl(var(--ring) / 0.12); }
+.field textarea { height: 72px; padding: 8px 10px; resize: vertical; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.overlay {
+  position: fixed; inset: 0; background: rgb(0 0 0 / 0.55); display: none; place-items: center; z-index: 50; padding: 24px;
+}
+.overlay.show { display: grid; }
+.overlay .sheet { background: #fff; color: #111; padding: 28px; border-radius: 16px; max-width: 90vw; }
+.switch { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: hsl(var(--muted-foreground)); }
+.hidden { display: none !important; }
+.empty { color: hsl(var(--muted-foreground)); font-size: 13px; padding: 8px 0; }
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar, .panel { position: static; height: auto; border: 0; }
+  .sidebar { display: flex; flex-direction: row; gap: 6px; overflow: auto; border-bottom: 1px solid hsl(var(--border)); }
+  .nav-btn { white-space: nowrap; width: auto; }
+  .panel { border-top: 1px solid hsl(var(--border)); }
+}
+@media print {
+  .header, .sidebar, .panel, .btn, .search { display: none !important; }
+  .layout { display: block; }
+  .barcode-stage { break-inside: avoid; }
+}
+</style>
 </head>
 <body>
-  <p><a href="Netum_C750_Configurator.html">Open the Netum C750 Configurator</a></p>
+  <header class="header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="#fafafa">
+          <rect x="7" y="8" width="2" height="16"/>
+          <rect x="11" y="8" width="1.5" height="16"/>
+          <rect x="14" y="8" width="3" height="16"/>
+          <rect x="19" y="8" width="1.5" height="16"/>
+          <rect x="22" y="8" width="2.5" height="16"/>
+          <rect x="26" y="8" width="1" height="16"/>
+        </svg>
+      </div>
+      <div>
+        <strong>Netum C750</strong>
+        <small id="subtitle">Configurator · manual v1.0.0</small>
+      </div>
+    </div>
+    <div class="search" id="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+      <input id="q" placeholder="Search a setting, symbology, or command…" autocomplete="off">
+      <button class="search-clear" id="q-clear" type="button" title="Clear search" aria-label="Clear search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="header-actions">
+      <button class="btn" id="lang-btn" type="button" title="Français">FR</button>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar" id="nav"></aside>
+    <main class="main" id="main"></main>
+    <aside class="panel">
+      <h2 id="reception-title">Keyboard input</h2>
+      <label class="switch" id="arm-label"><input type="checkbox" id="arm" checked> Capture on</label>
+      <p class="note" id="capture-help">This field stays focused, even after clicking a button. Uncheck “Capture on” only to type in search or tools.</p>
+      <textarea id="capture" class="capture armed" placeholder="Ready — scan a barcode…" autocomplete="off" spellcheck="false"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="btn btn-primary" id="select-result" type="button">Select all</button>
+        <button class="btn" id="copy-result" type="button">Copy</button>
+      </div>
+      <div id="kvs" class="kvs"></div>
+      <div class="result-box" id="result-vis">Waiting</div>
+      <div class="row" style="margin-top:10px; justify-content:space-between; align-items:center">
+        <h2 id="history-title" style="margin:0">History</h2>
+        <button class="btn btn-ghost" id="clear-hist" type="button">Clear</button>
+      </div>
+      <ul class="history" id="hist"></ul>
+    </aside>
+  </div>
+  <div class="overlay" id="overlay"></div>
+  <script>/**
+ * Minified by jsDelivr using Terser v5.37.0.
+ * Original file: /npm/qrcode-generator@1.4.4/qrcode.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,(function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1}))},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(n*r,o*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}((function(){return qrcode}));
+//# sourceMappingURL=/sm/26b4b0d0b1e283d6b3ec9857ac597d7a60c76ac17be1ef4c965f03086de426bb.map</script>
+  <script>const CATALOG = [{"id": "start", "title": "Démarrage", "hint": "Les actions les plus utiles pour prendre en main le C750.", "groups": [{"id": "readouts", "title": "Lire l’état du scanner", "kind": "actions", "items": [{"code": "$SW#VER", "label": "Version du firmware", "returns": true}, {"code": "%BAT_VOL#", "label": "Niveau de batterie", "returns": true, "note": "≥ 4,2 V plein · ≤ 3,7 V faible (2 bips) · ≤ 3,5 V critique (5 bips)."}, {"code": "%#IFSNO$", "label": "Interface / mode actuel", "returns": true}, {"code": "$RF#ST", "label": "Délai de veille actuel", "returns": true}, {"code": "%KB#SP?", "label": "Vitesse clavier USB", "returns": true, "note": "Exemple : KB SP=2,4 → USB 2 ms, récepteur 4 ms."}, {"code": "AT+HIDDLY", "label": "Délai clavier Bluetooth", "returns": true}, {"code": "$LAN#", "label": "Disposition clavier actuelle", "returns": true}, {"code": "$KB#OS", "label": "Périphérique récepteur actuel", "returns": true}, {"code": "%CHARSET#", "label": "Jeu de caractères actuel", "returns": true, "qr": true}], "note": "Scannez un code, le scanner tape la réponse dans le panneau Réception."}]}, {"id": "reset", "title": "Réinitialisation", "hint": "Restaurer ou enregistrer les défauts du scanner.", "groups": [{"id": "reset", "title": "Réinitialisation", "kind": "actions", "items": [{"code": "%#IFSNO$B", "label": "Restaurer les défauts personnalisés"}, {"code": "%#IFSNO$CS", "label": "Enregistrer les défauts personnalisés"}, {"code": "%#IFSNO$CR", "label": "Rétablir les défauts usine", "danger": true, "note": "Efface aussi les défauts personnalisés."}]}]}, {"id": "system", "title": "Système", "hint": "Mode de travail et mémoire interne.", "groups": [{"id": "workmode", "title": "Mode de travail", "kind": "choice", "items": [{"code": "%#NORMD", "label": "Mode normal", "default": true}, {"code": "%#INVMD", "label": "Mode stockage"}], "note": "En mode stockage, les codes sont mémorisés. Un second scan de « Envoyer la mémoire » annule l’envoi en cours."}, {"id": "storage", "title": "Mémoire", "kind": "actions", "items": [{"code": "%#TXMEM", "label": "Envoyer les codes stockés", "returns": true}, {"code": "%#+TCNT", "label": "Nombre de codes stockés", "returns": true}, {"code": "%#TXMEM#C", "label": "Vider la mémoire après envoi"}, {"code": "%#+TCNT#", "label": "Espace mémoire utilisé", "returns": true}, {"code": "%#*NEW*", "label": "Effacer les codes stockés", "danger": true}]}, {"id": "autosave", "title": "Sauvegarde auto (sans fil)", "kind": "choice", "items": [{"code": "%AutoSav#Off", "label": "Désactivée", "default": true}, {"code": "%AutoSav#On", "label": "Activée"}], "note": "Si un envoi 2.4G / Bluetooth échoue, le code est conservé. Récupération via « Envoyer les codes stockés »."}]}, {"id": "power", "title": "Alimentation", "hint": "Veille et extinction.", "groups": [{"id": "sleep", "title": "Délai de veille", "kind": "choice", "items": [{"code": "$POWER#OFF", "label": "Veille immédiate"}, {"code": "$RF#ST02", "label": "1 minute"}, {"code": "$RF#ST06", "label": "3 minutes", "default": true}, {"code": "$RF#ST10", "label": "5 minutes"}, {"code": "$RF#ST20", "label": "10 minutes"}, {"code": "$RF#ST60", "label": "30 minutes"}, {"code": "$RF#ST<0", "label": "1 heure"}, {"code": "$RF#STH0", "label": "2 heures"}, {"code": "$RF#ST00", "label": "Jamais"}]}]}, {"id": "feedback", "title": "Indicateurs", "hint": "Bip, tonalité et vibreur.", "groups": [{"id": "volume", "title": "Volume du bip", "kind": "choice", "items": [{"code": "$BUZZ#0", "label": "Muet"}, {"code": "$BUZZ#1", "label": "Fort", "default": true}, {"code": "$BUZZ#2", "label": "Moyen"}, {"code": "$BUZZ#3", "label": "Faible"}]}, {"id": "pitch", "title": "Tonalité", "kind": "choice", "items": [{"code": "$BUZZ#4", "label": "Aiguë", "default": true}, {"code": "$BUZZ#5", "label": "Grave"}]}, {"id": "sdkbeep", "title": "Réponse vocale SDK", "kind": "choice", "items": [{"code": "%ACKBEEP#0", "label": "Désactivée", "default": true}, {"code": "%ACKBEEP#1", "label": "Activée"}, {"code": "%ACKBEEP#2", "label": "Bip de connexion base (bascule)", "toggle": true}]}, {"id": "motor", "title": "Moteur vibreur", "kind": "choice", "items": [{"code": "$MOTO#0", "label": "Désactivé"}, {"code": "$MOTO#1", "label": "Activé"}], "note": "Fonctionne avec le bip. Tous les modèles ne le supportent pas."}]}, {"id": "usb", "title": "USB filaire", "hint": "Câble USB vers l’ordinateur.", "groups": [{"id": "usbif", "title": "Mode USB", "kind": "choice", "items": [{"code": "%#IFSNO$2", "label": "Clavier HID", "default": true}, {"code": "%#IFSNO$3", "label": "Port série virtuel (COM)"}]}, {"id": "usbauto", "title": "Sélection auto filaire / sans fil", "kind": "choice", "items": [{"code": "%000604", "label": "Activée", "default": true, "note": "USB prioritaire si le câble est branché, sinon 2.4G."}, {"code": "%000605", "label": "Désactivée"}]}, {"id": "usbspeed", "title": "Vitesse clavier USB", "kind": "choice", "items": [{"code": "%KB#SP1", "label": "Très rapide (~1 ms)", "default": true}, {"code": "%KB#SP4", "label": "Rapide (~4 ms)"}, {"code": "%KB#SP7", "label": "Moyenne (~7 ms)"}, {"code": "%KB#SP9", "label": "Lente (~9 ms)"}], "note": "Affecte aussi l’envoi RF/BT des très longs codes et l’upload mémoire."}, {"id": "multikey", "title": "Envoi multi-touches HID (Windows)", "kind": "choice", "items": [{"code": "%#IFSNO$6", "label": "Activé"}, {"code": "%#IFSNO$7", "label": "Désactivé", "default": true}]}]}, {"id": "rf", "title": "Sans fil 2.4G", "hint": "Dongle USB fourni.", "groups": [{"id": "rfmode", "title": "Transmission 2.4G", "kind": "actions", "items": [{"code": "%#IFSNO$1", "label": "Passer en 2.4G"}]}, {"id": "pair", "title": "Appairage", "kind": "actions", "items": [{"code": "$RF#CH0%", "label": "Démarrer l’appairage 2.4G", "note": "Valide uniquement en mode 2.4G. Bip continu jusqu’au dongle."}, {"code": "$RF#CH02", "label": "Appairage 1-vers-1"}, {"code": "$RF#CH0$", "label": "Appairage 1-vers-1 (variante)"}]}, {"id": "dongle", "title": "Mode du récepteur", "kind": "choice", "items": [{"code": "$USB#KEYM", "label": "Périphérique composite"}, {"code": "$USB#COM", "label": "Port série virtuel", "note": "Pilote COM requis."}, {"code": "$USB#KEY", "label": "Clavier HID"}], "note": "Composite : firmware récepteur FWVerL ou plus récent."}, {"id": "donglespeed", "title": "Vitesse clavier du récepteur", "kind": "choice", "items": [{"code": "%KB#SP", "label": "Lire la vitesse actuelle", "returns": true}, {"code": "$USB#KEY4", "label": "Moyenne"}, {"code": "$USB#KEY9", "label": "Lente"}], "note": "Scanner et récepteur doivent être à la même vitesse, sinon les longs codes se corrompent. La vitesse haute correspond souvent au mode clavier du récepteur."}, {"id": "cache", "title": "Cache 2.4G (bascule)", "kind": "actions", "items": [{"code": "%KB#SPFF", "label": "Cache SRAM (bascule)", "note": "2 bips = off · 3 tons = on.", "toggle": true}, {"code": "%KB#SPFC", "label": "Cache hors-ligne (bascule)", "toggle": true}], "note": "Utile si vous scannez vite de gros codes, ou si le scanner sort brièvement de portée."}]}, {"id": "bt", "title": "Bluetooth", "hint": "LED bleue allumée / clignotante = mode Bluetooth.", "groups": [{"id": "btmode", "title": "Transmission Bluetooth", "kind": "actions", "items": [{"code": "%#IFSNO$4", "label": "Passer en Bluetooth"}]}, {"id": "btprofile", "title": "Profil Bluetooth", "kind": "choice", "items": [{"code": "AT+MODE=2", "label": "HID clavier", "default": true, "note": "Visible dans les réglages Bluetooth du système, sans logiciel."}, {"code": "AT+MODE=1", "label": "SPP (série)", "note": "Pour une appli qui ouvre un port COM Bluetooth."}, {"code": "AT+MODE=3", "label": "BLE (série)"}, {"code": "%BTDONGLE#", "label": "Berceau Bluetooth"}], "note": "Effacez l’appairage côté hôte avant de changer de profil."}, {"id": "btpair", "title": "Appairage", "kind": "actions", "items": [{"code": "%%ALL-CH", "label": "Effacer l’appairage Bluetooth", "danger": true}]}, {"id": "ios", "title": "Clavier iOS / Windows", "kind": "actions", "items": [{"code": "%%0S", "label": "Afficher / masquer le clavier iOS"}, {"code": "%%0H3", "label": "Maintien 4 s du déclencheur → clavier iOS", "toggle": true}, {"code": "%%0HH", "label": "Double pression déclencheur → clavier iOS", "toggle": true}, {"code": "%%0AP", "label": "Afficher le clavier iOS après envoi", "toggle": true}, {"code": "%%0HL", "label": "Détection Caps Lock Windows", "note": "2 bips = off · 3 tons = on.", "toggle": true}, {"code": "%%0H8", "label": "Maintien 8 s : bascule 2.4G / Bluetooth", "note": "Plus de 16 s = extinction, sans changement de mode.", "toggle": true}, {"code": "%%0AS", "label": "Ne pas dormir tant que le Bluetooth est connecté", "toggle": true}]}, {"id": "btspeed", "title": "Vitesse clavier Bluetooth HID", "kind": "choice", "items": [{"code": "AT+HIDDLY=2", "label": "2 ms (très rapide)"}, {"code": "AT+HIDDLY=6", "label": "6 ms"}, {"code": "AT+HIDDLY=10", "label": "10 ms", "default": true}, {"code": "AT+HIDDLY=18", "label": "18 ms"}, {"code": "AT+HIDDLY=25", "label": "25 ms"}, {"code": "AT+HIDDLY=30", "label": "30 ms (lent)"}]}]}, {"id": "keyboard", "title": "Clavier", "hint": "S’applique à USB HID, 2.4G clavier et Bluetooth HID.", "groups": [{"id": "ctrl", "title": "Combinaisons Ctrl / Alt (ASCII < 0x20)", "kind": "choice", "items": [{"code": "$KEY#M0", "label": "Désactivées", "default": true}, {"code": "$KEY#M1", "label": "Config 1 — Ctrl+"}, {"code": "$KEY#M2", "label": "Config 2 — Alt+ (Windows)"}, {"code": "$KEY#M3", "label": "Config 3 — touche normale"}, {"code": "$KEY#M4", "label": "Config 4 — Ctrl+"}, {"code": "$KEY#M5", "label": "Config 5 — Alt+ (Windows)"}]}, {"id": "case", "title": "Casse", "kind": "choice", "items": [{"code": "%LKLED#0", "label": "Normale", "default": true}, {"code": "%LKLED#1", "label": "Inverser"}, {"code": "%LKLED#2", "label": "Tout en majuscules"}, {"code": "%LKLED#3", "label": "Tout en minuscules"}], "note": "Sans effet avec les dispositions ALT et thaïe."}, {"id": "numlock", "title": "Verr. num", "kind": "choice", "items": [{"code": "%LKLED#4", "label": "Verr. num désactivé"}, {"code": "%LKLED#5", "label": "Verr. num activé"}], "note": "Sur téléphone, laissez le verr. num désactivé, sinon les chiffres peuvent manquer."}, {"id": "charset", "title": "Jeu de caractères (moteur 2D)", "kind": "choice", "items": [{"code": "%CHARSET#0", "label": "Automatique", "default": true, "qr": true}, {"code": "%CHARSET#1", "label": "GBK / BIG5 / Hangul / SJIS", "qr": true}, {"code": "%CHARSET#3", "label": "ISO/IEC 8859", "qr": true, "note": "Caractères européens ≥ C0h (FR, DE, TR, PT, ES…)."}, {"code": "%CHARSET#2", "label": "UTF-8 (Word)", "qr": true}, {"code": "%CHARSET#21", "label": "UTF-8 (Txt / Notepad)", "qr": true}, {"code": "%CHARSET#4", "label": "Mode normal (multi-langues)", "qr": true}]}, {"id": "host", "title": "Appareil récepteur", "kind": "choice", "items": [{"code": "$KB#OS0", "label": "Windows"}, {"code": "$KB#OS1", "label": "iPhone / iPad / Mac"}, {"code": "$KB#OS2", "label": "Android"}], "note": "À combiner avec la langue du clavier. Sur Android, Google Gboard est recommandé."}]}, {"id": "lang", "title": "Langue clavier", "hint": "Doit correspondre à la disposition du système, sinon @ # / chiffres se mélangent.", "groups": [{"id": "layout", "title": "Disposition", "kind": "choice", "items": [{"code": "$LAN#EN", "label": "Anglais (États-Unis)", "default": true}, {"code": "$LAN#FR", "label": "Français (France)"}, {"code": "$LAN#GE", "label": "Allemand"}, {"code": "$LAN#IT", "label": "Italien"}, {"code": "$LAN#PT", "label": "Portugais"}, {"code": "$LAN#ES", "label": "Espagnol"}, {"code": "$LAN#TK", "label": "Turc Q"}, {"code": "$LAN#TF", "label": "Turc F"}, {"code": "$LAN#UK", "label": "Anglais (Royaume-Uni)"}, {"code": "$LAN#CS", "label": "Tchèque"}, {"code": "$LAN#CY", "label": "Tchèque (standard)"}, {"code": "$LAN#HU", "label": "Hongrois"}, {"code": "$LAN#FB", "label": "Français (Belgique)"}, {"code": "$LAN#PB", "label": "Portugais (Brésil)"}, {"code": "$LAN#FC", "label": "Français canadien (traditionnel)"}, {"code": "$LAN#HR", "label": "Croate"}, {"code": "$LAN#SK", "label": "Slovaque QWERTY"}, {"code": "$LAN#SQ", "label": "Slovaque"}, {"code": "$LAN#DA", "label": "Danois"}, {"code": "$LAN#FI", "label": "Finnois"}, {"code": "$LAN#EL", "label": "Espagnol (Amérique latine)"}, {"code": "$LAN#NL", "label": "Néerlandais"}, {"code": "$LAN#NO", "label": "Norvégien"}, {"code": "$LAN#PL", "label": "Polonais"}, {"code": "$LAN#SR", "label": "Serbe latin"}, {"code": "$LAN#SL", "label": "Slovène"}, {"code": "$LAN#SV", "label": "Suédois"}, {"code": "$LAN#DS", "label": "Allemand (Suisse)"}, {"code": "$LAN#JP", "label": "Japonais"}, {"code": "$LAN#TH", "label": "Thaï", "note": "Le moteur doit aussi être en sortie TH."}, {"code": "$LAN#AG", "label": "ALT international (Windows)", "note": "Indépendant de la disposition hôte, mais plus lent."}, {"code": "$LAN#RU", "label": "ALT caractères spéciaux 8 bits"}]}]}, {"id": "data", "title": "Données", "hint": "Terminaison, préfixe / suffixe, masquage. L’onglet Outils génère un code unique.", "groups": [{"id": "term", "title": "Caractère de fin (MCU)", "kind": "choice", "items": [{"code": "$TERM#0", "label": "Aucun", "default": true}, {"code": "$TERM#1", "label": "CR (Entrée)"}, {"code": "$TERM#2", "label": "Tabulation"}, {"code": "$TERM#3", "label": "CR + LF"}, {"code": "$TERM#4", "label": "LF"}], "note": "Indépendant du suffixe moteur. Idéal si le moteur n’ajoute rien. CR = Entrée, pratique dans un champ."}, {"id": "format", "title": "Format de sortie (préfixe / suffixe / masque)", "kind": "choice", "items": [{"code": "$DATA#0", "label": "Format par défaut", "default": true}, {"code": "$DATA#1", "label": "Autoriser le suffixe"}, {"code": "$DATA#2", "label": "Autoriser le préfixe"}, {"code": "$DATA#5", "label": "Autoriser le masque en tête"}, {"code": "$DATA#4", "label": "Autoriser le masque au milieu"}, {"code": "$DATA#3", "label": "Autoriser le masque en queue"}]}, {"id": "editops", "title": "Opérations d’édition (puis codes 0–F)", "kind": "actions", "items": [{"code": "$SCAN#2", "label": "Ajouter un préfixe"}, {"code": "$SCAN#1", "label": "Ajouter un suffixe"}, {"code": "$SCAN#4", "label": "Effacer tous les préfixes"}, {"code": "$SCAN#3", "label": "Effacer tous les suffixes"}, {"code": "$SCAN#5", "label": "Masquer n caractères en tête"}, {"code": "$SCAN#6", "label": "Masquer : position de début (milieu)"}, {"code": "$SCAN#7", "label": "Masquer : longueur (milieu)"}, {"code": "$SCAN#8", "label": "Masquer n caractères en queue"}], "note": "Après l’opération, scannez deux codes hexa (ex. 0 puis D = CR). Préférez le générateur « un code » dans Outils."}, {"id": "replace", "title": "Remplacement de caractères", "kind": "actions", "items": [{"code": "$DATA#700A#", "label": "Lire les remplacements", "returns": true}, {"code": "$DATA#7000#", "label": "Effacer les remplacements", "danger": true}, {"code": "$DATA#7001\\x1D02GS#", "label": "GS (0x1D) → texte GS"}, {"code": "$DATA#7001\n01\r#", "label": "LF (0x0A) → CR (0x0D)"}]}, {"id": "gs1ai", "title": "Parenthèses champs AI GS1", "kind": "choice", "items": [{"code": "$DATA#AI0", "label": "Brut", "default": true, "qr": true}, {"code": "$DATA#AI1", "label": "Ajouter des parenthèses", "qr": true}, {"code": "$DATA#AI1\r#", "label": "Parenthèses + séparation CR", "qr": true}, {"code": "$DATA#AI1\t#", "label": "Parenthèses + séparation Tab", "qr": true}], "note": "Certains champs AI seulement, firmware spécifique."}]}, {"id": "scan", "title": "Lecture", "hint": "Déclenchement, timeouts, anti-doublon.", "groups": [{"id": "decmode", "title": "Mode de décodage (MCU)", "kind": "choice", "items": [{"code": "%SCMD#00#", "label": "Gâchette (maintien)", "default": true}, {"code": "%SCMD#01#", "label": "Continu", "note": "Une pression démarre / arrête."}, {"code": "%SCMD#02#", "label": "Impulsion"}, {"code": "%SCMD#03#", "label": "Déclenché par l’hôte", "note": "Modèles custom."}, {"code": "%SCMD#04#", "label": "Lot", "note": "Modèles custom."}]}, {"id": "timeout", "title": "Timeout de décodage (MCU)", "kind": "choice", "items": [{"code": "%SCMD#3000D", "label": "3 secondes", "default": true}, {"code": "%SCMD#6000D", "label": "6 secondes"}]}, {"id": "interval", "title": "Intervalle en continu (MCU)", "kind": "choice", "items": [{"code": "%SCMD#0500I", "label": "0,5 s", "default": true}, {"code": "%SCMD#1000I", "label": "1 s"}]}, {"id": "engtrig", "title": "Mode déclencheur (moteur)", "kind": "choice", "items": [{"code": "2050200", "label": "Maintien (niveau)", "default": true}, {"code": "2050202", "label": "Impulsion (simple pression)"}, {"code": "2050204", "label": "Continu"}, {"code": "2050209", "label": "Détection auto (luminosité)"}]}, {"id": "engtime", "title": "Durée d’un scan (moteur)", "kind": "choice", "items": [{"code": "3030CF0", "label": "Illimitée"}, {"code": "3030CF3", "label": "3 s"}, {"code": "3030CF5", "label": "5 s"}, {"code": "3030CFA", "label": "10 s"}, {"code": "3030CFB", "label": "15 s"}, {"code": "3030CFC", "label": "20 s"}, {"code": "3030CFD", "label": "30 s"}, {"code": "3030CFE", "label": "60 s"}, {"code": "30500305FF", "label": "Personnalisée (puis 3 chiffres, unité 100 ms)", "note": "500 ms → 0, 0, 5. 10,5 s → 1, 0, 5. Plage 500–25500 ms."}]}, {"id": "engint", "title": "Intervalle continu (moteur)", "kind": "actions", "items": [{"code": "3050120063", "label": "Personnalisé (puis 2 chiffres, unité 100 ms)", "note": "500 ms → 0 puis 5. Défaut 500 ms, max 9,9 s."}]}, {"id": "samedelay", "title": "Délai anti-doublon (même code)", "kind": "choice", "items": [{"code": "3030C90", "label": "Aucun"}, {"code": "3030C91", "label": "1 s"}, {"code": "3030C93", "label": "3 s"}, {"code": "3030C95", "label": "5 s"}, {"code": "3030C97", "label": "7 s"}, {"code": "3030C99", "label": "Illimité (ne relit pas le même code)"}, {"code": "3F30000003", "label": "Personnalisé (puis 2 chiffres, unité 100 ms)"}]}, {"id": "codeid", "title": "Identifiant de symbologie", "kind": "choice", "items": [{"code": "2051700", "label": "Aucun", "default": true}, {"code": "2051702", "label": "Code ID (lettre, ex. q = QR)"}, {"code": "2051701", "label": "AIM ID (ex. ]C0)"}]}, {"id": "engterm", "title": "Terminaison moteur", "kind": "choice", "items": [{"code": "3030050", "label": "Aucune", "default": true}, {"code": "3030051", "label": "CR LF"}, {"code": "3030052", "label": "CR"}, {"code": "3030053", "label": "Tab"}, {"code": "3030054", "label": "Entrée (CR)"}, {"code": "3030055", "label": "CR LF (variante)"}], "note": "Distinct de la terminaison MCU ($TERM#). Évitez d’en activer deux, sinon double Entrée."}, {"id": "gs1eng", "title": "Règles GS1 (moteur)", "kind": "choice", "items": [{"code": "6063C00", "label": "Désactivées", "default": true}, {"code": "6063C01", "label": "Activées"}]}, {"id": "inv1d", "title": "Codes 1D inversés", "kind": "choice", "items": [{"code": "3030910", "label": "Désactivé", "default": true}, {"code": "3030911", "label": "Activé"}]}, {"id": "globalsym", "title": "Interrupteurs globaux", "kind": "actions", "items": [{"code": "3030110", "label": "1D désactivé"}, {"code": "3030111", "label": "1D activé"}, {"code": "3030500", "label": "QR désactivé"}, {"code": "3030501", "label": "QR activé"}, {"code": "3030900", "label": "Tout désactiver", "danger": true}, {"code": "3030901", "label": "Tout activer"}]}, {"id": "safety", "title": "Niveau de sécurité 1D", "kind": "choice", "items": [{"code": "2051501", "label": "1 — 1 lecture", "default": true}, {"code": "2051502", "label": "2 — 2 lectures"}, {"code": "2051503", "label": "3 — 3 lectures"}, {"code": "2051504", "label": "4 — 4 lectures"}], "note": "Plus le niveau est haut, plus le moteur est prudent (codes abîmés) et moins agressif."}, {"id": "devicefn", "title": "Fonctions appareil", "kind": "choice", "items": [{"code": "3030EA0", "label": "Blocage URL désactivé", "default": true}, {"code": "3030EA1", "label": "Blocage URL activé"}]}, {"id": "invoice", "title": "Factures (TVA)", "kind": "choice", "items": [{"code": "3030080", "label": "Fonction facture désactivée", "default": true}, {"code": "3030081", "label": "Fonction facture activée", "note": "Désactive Code 128 automatiquement."}, {"code": "3030AA0", "label": "Facture spéciale", "default": true}, {"code": "3030AA1", "label": "Facture ordinaire"}]}]}, {"id": "sym", "title": "Symbologies", "hint": "Activez seulement ce dont vous avez besoin : moins de collisions, lecture plus nette.", "groups": [{"id": "upca", "title": "UPC-A", "kind": "choice", "items": [{"code": "1000011", "label": "Activer", "default": true}, {"code": "1000010", "label": "Désactiver"}, {"code": "2030100", "label": "Préambule : aucun"}, {"code": "2030101", "label": "Préambule : caractère système", "default": true}, {"code": "2030102", "label": "Préambule : pays + système"}, {"code": "1020021", "label": "Transmettre la clé", "default": true}, {"code": "1020020", "label": "Ne pas transmettre la clé"}, {"code": "3030401", "label": "Add-on 2 digits : oui"}, {"code": "3030400", "label": "Add-on 2 digits : non", "default": true}, {"code": "3030411", "label": "Add-on 5 digits : oui"}, {"code": "3030410", "label": "Add-on 5 digits : non", "default": true}, {"code": "3030421", "label": "Add-on obligatoire"}, {"code": "3030420", "label": "Add-on facultatif", "default": true}]}, {"id": "upce", "title": "UPC-E", "kind": "choice", "items": [{"code": "1000021", "label": "Activer", "default": true}, {"code": "1000020", "label": "Désactiver"}, {"code": "2030000", "label": "Préambule : aucun"}, {"code": "2030001", "label": "Préambule : caractère système", "default": true}, {"code": "2030002", "label": "Préambule : pays + système"}, {"code": "1020031", "label": "Transmettre la clé", "default": true}, {"code": "1020030", "label": "Ne pas transmettre la clé"}, {"code": "1020001", "label": "Convertir vers UPC-A"}, {"code": "1020000", "label": "Ne pas convertir", "default": true}, {"code": "30303D1", "label": "Add-on 2 digits : oui"}, {"code": "30303D0", "label": "Add-on 2 digits : non", "default": true}, {"code": "30303E1", "label": "Add-on 5 digits : oui"}, {"code": "30303E0", "label": "Add-on 5 digits : non", "default": true}, {"code": "30303F1", "label": "Add-on obligatoire"}, {"code": "30303F0", "label": "Add-on facultatif", "default": true}, {"code": "3030150", "label": "UPC-E1 désactivé", "default": true}, {"code": "3030151", "label": "UPC-E1 activé"}]}, {"id": "ean8", "title": "EAN-8", "kind": "choice", "items": [{"code": "1000041", "label": "Activer", "default": true}, {"code": "1000040", "label": "Désactiver"}, {"code": "1020011", "label": "Extension zéros (vers EAN-13)"}, {"code": "1020010", "label": "Sans extension", "default": true}, {"code": "3030371", "label": "Add-on 2 digits : oui"}, {"code": "3030370", "label": "Add-on 2 digits : non", "default": true}, {"code": "3030381", "label": "Add-on 5 digits : oui"}, {"code": "3030380", "label": "Add-on 5 digits : non", "default": true}, {"code": "3030391", "label": "Add-on obligatoire"}, {"code": "3030390", "label": "Add-on facultatif", "default": true}, {"code": "3030800", "label": "Ne pas envoyer la clé"}, {"code": "3030801", "label": "Envoyer la clé", "default": true}]}, {"id": "ean13", "title": "EAN-13 / ISBN", "kind": "choice", "items": [{"code": "1000031", "label": "Activer EAN-13", "default": true}, {"code": "1000030", "label": "Désactiver EAN-13"}, {"code": "30303A1", "label": "Add-on 2 digits : oui"}, {"code": "30303A0", "label": "Add-on 2 digits : non", "default": true}, {"code": "30303B1", "label": "Add-on 5 digits : oui"}, {"code": "30303B0", "label": "Add-on 5 digits : non", "default": true}, {"code": "30303C1", "label": "Add-on obligatoire"}, {"code": "30303C0", "label": "Add-on facultatif", "default": true}, {"code": "3030160", "label": "Ne pas envoyer la clé"}, {"code": "3030161", "label": "Envoyer la clé"}, {"code": "1000231", "label": "Activer Bookland EAN (ISBN)"}, {"code": "1000230", "label": "Désactiver ISBN", "default": true}]}, {"id": "c128", "title": "Code 128 / GS1-128 / ISBT", "kind": "choice", "items": [{"code": "1000101", "label": "Activer Code 128", "default": true}, {"code": "1000100", "label": "Désactiver Code 128"}, {"code": "3030351", "label": "Envoyer la clé Code 128"}, {"code": "3030350", "label": "Ne pas envoyer la clé", "default": true}, {"code": "F3118485F50000005", "label": "Code 128 : toute longueur"}, {"code": "F0118485F50000005", "label": "Code 128 : longueur imposée (puis 4 chiffres)"}, {"code": "1040331", "label": "Activer GS1-128", "default": true}, {"code": "1040330", "label": "Désactiver GS1-128"}, {"code": "3030361", "label": "Envoyer la clé GS1-128"}, {"code": "3030360", "label": "Ne pas envoyer la clé GS1-128", "default": true}, {"code": "F3118687F50000007", "label": "GS1-128 : toute longueur"}, {"code": "F0118687F50000007", "label": "GS1-128 : longueur imposée (puis 4 chiffres)"}, {"code": "1000331", "label": "Activer ISBT 128", "default": true}, {"code": "1000330", "label": "Désactiver ISBT 128"}]}, {"id": "c39", "title": "Code 39 / Code 32", "kind": "choice", "items": [{"code": "1000001", "label": "Activer Code 39", "default": true}, {"code": "1000000", "label": "Désactiver Code 39"}, {"code": "F3010001013700000", "label": "Toute longueur"}, {"code": "F0010001013700000", "label": "Longueur imposée (puis 4 chiffres)"}, {"code": "1020041", "label": "Vérifier la clé (mod 43)"}, {"code": "1020040", "label": "Ne pas vérifier", "default": true}, {"code": "1020241", "label": "Transmettre la clé"}, {"code": "1020240", "label": "Ne pas transmettre la clé", "default": true}, {"code": "1020111", "label": "Full ASCII"}, {"code": "1020110", "label": "Full ASCII off", "default": true}, {"code": "3030300", "label": "Start/stop non transmis", "default": true}, {"code": "3030301", "label": "Transmettre start/stop"}, {"code": "1020300", "label": "Pas de conversion Code 32", "default": true}, {"code": "1020301", "label": "Convertir en Code 32 (pharma IT)"}, {"code": "1020320", "label": "Préfixe Code 32 « A » off", "default": true}, {"code": "1020321", "label": "Préfixe Code 32 « A » on"}, {"code": "3030190", "label": "Vérif. clé Code 32 off", "default": true}, {"code": "3030191", "label": "Vérif. clé Code 32 on"}, {"code": "30301A0", "label": "Clé Code 32 = 0x00", "default": true}, {"code": "30301A1", "label": "Transmettre la clé Code 32"}]}, {"id": "c93", "title": "Code 93", "kind": "choice", "items": [{"code": "1000111", "label": "Activer"}, {"code": "1000110", "label": "Désactiver", "default": true}, {"code": "F3010A0B023700011", "label": "Toute longueur"}, {"code": "F0010A0B023700011", "label": "Longueur imposée"}]}, {"id": "c11", "title": "Code 11", "kind": "choice", "items": [{"code": "1000121", "label": "Activer"}, {"code": "1000120", "label": "Désactiver", "default": true}, {"code": "F3010C0D013700012", "label": "Toute longueur"}, {"code": "F0010C0D013700012", "label": "Longueur imposée"}, {"code": "2051200", "label": "Contrôle activé", "default": true}, {"code": "2051201", "label": "1 clé"}, {"code": "2051202", "label": "2 clés"}, {"code": "1020141", "label": "Transmettre la clé"}, {"code": "1020140", "label": "Ne pas transmettre", "default": true}]}, {"id": "i25", "title": "Interleaved 2 of 5", "kind": "choice", "items": [{"code": "1000061", "label": "Activer", "default": true}, {"code": "1000060", "label": "Désactiver"}, {"code": "F3010809024400006", "label": "Toute longueur"}, {"code": "F0010809024400006", "label": "Longueur imposée"}, {"code": "2051E00", "label": "Vérif. clé off", "default": true}, {"code": "2051E01", "label": "Vérif. clé on"}, {"code": "1020211", "label": "Transmettre la clé"}, {"code": "1020210", "label": "Ne pas transmettre", "default": true}]}, {"id": "d25", "title": "Industrial / Discrete 2 of 5", "kind": "choice", "items": [{"code": "1000051", "label": "Activer"}, {"code": "1000050", "label": "Désactiver", "default": true}, {"code": "F3010607023700005", "label": "Toute longueur"}, {"code": "F0010607023700005", "label": "Longueur imposée"}, {"code": "3030481", "label": "Vérif. on"}, {"code": "3030480", "label": "Vérif. off", "default": true}, {"code": "3030491", "label": "Transmettre la clé"}, {"code": "3030490", "label": "Ne pas transmettre la clé"}]}, {"id": "m25", "title": "Matrix 2 of 5", "kind": "choice", "items": [{"code": "3030201", "label": "Activer"}, {"code": "3030200", "label": "Désactiver", "default": true}, {"code": "3030211", "label": "Vérif. on"}, {"code": "3030210", "label": "Vérif. off", "default": true}, {"code": "3030221", "label": "Transmettre la clé"}, {"code": "3030220", "label": "Ne pas transmettre", "default": true}, {"code": "F3118081F50000001", "label": "Toute longueur"}, {"code": "F0118081F50000001", "label": "Longueur imposée"}]}, {"id": "s25", "title": "Standard 2 of 5 / IATA", "kind": "choice", "items": [{"code": "3030230", "label": "Désactiver", "default": true}, {"code": "3030231", "label": "Activer"}, {"code": "3030240", "label": "Vérif. off", "default": true}, {"code": "3030241", "label": "Vérif. on"}, {"code": "3030250", "label": "Ne pas transmettre la clé", "default": true}, {"code": "3030251", "label": "Transmettre la clé"}, {"code": "F3118283F50000003", "label": "Toute longueur"}, {"code": "F0118283F50000003", "label": "Longueur imposée"}]}, {"id": "codabar", "title": "Codabar", "kind": "choice", "items": [{"code": "1000071", "label": "Activer"}, {"code": "1000070", "label": "Désactiver", "default": true}, {"code": "F3010203023700007", "label": "Toute longueur"}, {"code": "F0010203023700007", "label": "Longueur imposée"}, {"code": "30304C1", "label": "Vérif. on"}, {"code": "30304C0", "label": "Vérif. off", "default": true}, {"code": "30304D1", "label": "Transmettre la clé"}, {"code": "30304D0", "label": "Ne pas transmettre", "default": true}, {"code": "1020061", "label": "Édition NOTIS on"}, {"code": "1020060", "label": "Édition NOTIS off", "default": true}, {"code": "3030310", "label": "Start/stop ABCD/ABCD", "default": true}, {"code": "3030311", "label": "Start/stop ABCD/TN*E"}, {"code": "3030320", "label": "Start/stop majuscules", "default": true}, {"code": "3030321", "label": "Start/stop minuscules"}]}, {"id": "msi", "title": "MSI / Plessey", "kind": "choice", "items": [{"code": "1000141", "label": "Activer"}, {"code": "1000140", "label": "Désactiver", "default": true}, {"code": "F3010F10013700014", "label": "Toute longueur"}, {"code": "F0010F10013700014", "label": "Longueur imposée"}, {"code": "1020120", "label": "1 clé", "default": true}, {"code": "1020121", "label": "2 clés"}, {"code": "1020131", "label": "Transmettre la clé"}, {"code": "1020130", "label": "Ne pas transmettre", "default": true}, {"code": "1020230", "label": "Algo MOD10/MOD11"}, {"code": "1020231", "label": "Algo MOD10/MOD10", "default": true}]}, {"id": "gs1", "title": "GS1 DataBar / RSS", "kind": "choice", "items": [{"code": "1000351", "label": "Activer"}, {"code": "1000350", "label": "Désactiver", "default": true}, {"code": "3030261", "label": "Caractères AI on", "default": true}, {"code": "3030260", "label": "Caractères AI off"}]}, {"id": "pdf417", "title": "PDF417", "kind": "choice", "items": [{"code": "1000171", "label": "Activer", "default": true}, {"code": "1000170", "label": "Désactiver"}, {"code": "3030610", "label": "Lecture normale seulement", "default": true}, {"code": "3030611", "label": "Inversé seulement"}, {"code": "3030612", "label": "Normal + inversé"}]}, {"id": "qr", "title": "QR Code", "kind": "choice", "items": [{"code": "1003251", "label": "Activer", "default": true}, {"code": "1003250", "label": "Désactiver"}, {"code": "3030660", "label": "ECI non transmis", "default": true}, {"code": "3030661", "label": "ECI transmis"}, {"code": "3030670", "label": "Lecture normale seulement", "default": true}, {"code": "3030671", "label": "Inversé seulement"}, {"code": "3030672", "label": "Normal + inversé"}, {"code": "6063A00", "label": "Conserver BOM UTF-8", "default": true}, {"code": "6063A01", "label": "Retirer BOM UTF-8"}]}, {"id": "dm", "title": "Data Matrix", "kind": "choice", "items": [{"code": "1003241", "label": "Activer", "default": true}, {"code": "1003240", "label": "Désactiver"}, {"code": "30306B0", "label": "Lecture normale seulement", "default": true}, {"code": "30306B1", "label": "Inversé seulement"}, {"code": "30306B2", "label": "Normal + inversé"}, {"code": "30306C0", "label": "ECI non transmis", "default": true}, {"code": "30306C1", "label": "ECI transmis"}]}, {"id": "maxi", "title": "MaxiCode", "kind": "choice", "items": [{"code": "1003260", "label": "Désactiver", "default": true}, {"code": "1003261", "label": "Activer"}]}, {"id": "aztec", "title": "Aztec", "kind": "choice", "items": [{"code": "1003280", "label": "Désactiver", "default": true}, {"code": "1003281", "label": "Activer"}]}, {"id": "hanxin", "title": "Han Xin", "kind": "choice", "items": [{"code": "10032F0", "label": "Désactiver", "default": true}, {"code": "10032F1", "label": "Activer"}, {"code": "3030710", "label": "Lecture normale seulement", "default": true}, {"code": "3030711", "label": "Inversé seulement"}, {"code": "3030712", "label": "Normal + inversé"}]}, {"id": "issn", "title": "ISSN", "kind": "choice", "items": [{"code": "3030330", "label": "Désactiver (convertir en EAN-13)", "default": true}, {"code": "3030331", "label": "Activer"}]}, {"id": "nec25", "title": "NEC-25 / COOP 25", "kind": "choice", "items": [{"code": "3030451", "label": "Activer"}, {"code": "3030450", "label": "Désactiver", "default": true}, {"code": "3030461", "label": "Vérif. on"}, {"code": "3030460", "label": "Vérif. off", "default": true}, {"code": "3030471", "label": "Transmettre la clé"}, {"code": "3030470", "label": "Ne pas transmettre", "default": true}, {"code": "F3118889F50000009", "label": "Toute longueur"}, {"code": "F0118889F50000009", "label": "Longueur imposée"}]}, {"id": "composite", "title": "Composite", "kind": "choice", "items": [{"code": "3030170", "label": "Désactiver", "default": true}, {"code": "3030171", "label": "Activer"}]}]}, {"id": "numeric", "title": "Codes numériques", "hint": "À scanner après une commande qui attend une valeur (préfixe, longueurs, timeouts).", "groups": [{"id": "mcuhex", "title": "Hexa MCU (préfixe / suffixe / masque)", "kind": "actions", "items": [{"code": "$NO#0", "label": "0"}, {"code": "$NO#1", "label": "1"}, {"code": "$NO#2", "label": "2"}, {"code": "$NO#3", "label": "3"}, {"code": "$NO#4", "label": "4"}, {"code": "$NO#5", "label": "5"}, {"code": "$NO#6", "label": "6"}, {"code": "$NO#7", "label": "7"}, {"code": "$NO#8", "label": "8"}, {"code": "$NO#9", "label": "9"}, {"code": "$NO#A", "label": "A"}, {"code": "$NO#B", "label": "B"}, {"code": "$NO#C", "label": "C"}, {"code": "$NO#D", "label": "D"}, {"code": "$NO#E", "label": "E"}, {"code": "$NO#F", "label": "F"}], "note": "Deux digits par caractère ASCII. CR = 0 D · Tab = 0 9 · LF = 0 A."}, {"id": "engnum", "title": "Chiffres moteur (longueurs, timeouts)", "kind": "actions", "items": [{"code": "A0", "label": "0"}, {"code": "A1", "label": "1"}, {"code": "A2", "label": "2"}, {"code": "A3", "label": "3"}, {"code": "A4", "label": "4"}, {"code": "A5", "label": "5"}, {"code": "A6", "label": "6"}, {"code": "A7", "label": "7"}, {"code": "A8", "label": "8"}, {"code": "A9", "label": "9"}, {"code": "A-", "label": "Annuler la saisie"}]}]}];
+const ALL_CODES = [{"page": 4, "code": "$SW#VER", "label": "Read firmware version", "cat": "Système", "qr": false}, {"page": 4, "code": "%#IFSNO$B", "label": "Restore custom defaults", "cat": "Système", "qr": false}, {"page": 4, "code": "%#IFSNO$CS", "label": "Write custom default values", "cat": "Système", "qr": false}, {"page": 4, "code": "%#IFSNO$CR", "label": "Set factory defaults", "cat": "Système", "qr": false}, {"page": 5, "code": "%#NORMD", "label": "* Normal mode", "cat": "Système", "qr": false}, {"page": 5, "code": "%#INVMD", "label": "storage mode", "cat": "Système", "qr": false}, {"page": 5, "code": "%#TXMEM", "label": "Upload storage data", "cat": "Système", "qr": false}, {"page": 5, "code": "%#+TCNT", "label": "Read the total number of stored barcodes", "cat": "Système", "qr": false}, {"page": 5, "code": "%#TXMEM#C", "label": "Clear storage data after uploading", "cat": "Système", "qr": false}, {"page": 5, "code": "%#+TCNT#", "label": "Read storage space usage", "cat": "Système", "qr": false}, {"page": 6, "code": "%#*NEW*", "label": "Clear stored barcode", "cat": "Système", "qr": false}, {"page": 6, "code": "%AutoSav#Off", "label": "* Autosave mode off", "cat": "Système", "qr": false}, {"page": 6, "code": "%AutoSav#On", "label": "Automatic storage mode is on", "cat": "Système", "qr": false}, {"page": 6, "code": "$RF#ST", "label": "Read sleep time", "cat": "Système", "qr": false}, {"page": 6, "code": "$POWER#OFF", "label": "Hibernate now", "cat": "Système", "qr": false}, {"page": 6, "code": "$RF#ST02", "label": "Sleep after 1 minute", "cat": "Système", "qr": false}, {"page": 7, "code": "$RF#ST06", "label": "Sleep after 3 minutes (default)", "cat": "Alimentation", "qr": false}, {"page": 7, "code": "$RF#ST10", "label": "Sleep after 5 minutes", "cat": "Alimentation", "qr": false}, {"page": 7, "code": "$RF#ST20", "label": "Sleep after 10 minutes", "cat": "Alimentation", "qr": false}, {"page": 7, "code": "$RF#ST60", "label": "Sleep after 30 minutes", "cat": "Alimentation", "qr": false}, {"page": 7, "code": "$RF#ST<0", "label": "Sleep after 1 hour", "cat": "Alimentation", "qr": false}, {"page": 7, "code": "$RF#STH0", "label": "Sleep after 2 hours", "cat": "Alimentation", "qr": false}, {"page": 7, "code": "$RF#ST00", "label": "never sleep", "cat": "Alimentation", "qr": false}, {"page": 8, "code": "%BAT_VOL#", "label": "Get battery level", "cat": "Alimentation", "qr": false}, {"page": 8, "code": "$BUZZ#0", "label": "mute", "cat": "Alimentation", "qr": false}, {"page": 8, "code": "$BUZZ#1", "label": "* high volume", "cat": "Alimentation", "qr": false}, {"page": 8, "code": "$BUZZ#2", "label": "medium volume", "cat": "Alimentation", "qr": false}, {"page": 8, "code": "$BUZZ#3", "label": "low volume", "cat": "Alimentation", "qr": false}, {"page": 8, "code": "$BUZZ#4", "label": "* high pitch", "cat": "Alimentation", "qr": false}, {"page": 9, "code": "$BUZZ#5", "label": "low pitch", "cat": "Indicateurs", "qr": false}, {"page": 9, "code": "%ACKBEEP#0", "label": "* SDK voice response off", "cat": "Indicateurs", "qr": false}, {"page": 9, "code": "%ACKBEEP#1", "label": "SDK voice response enabled", "cat": "Indicateurs", "qr": false}, {"page": 9, "code": "%ACKBEEP#2", "label": "Base connection buzzer prompt switch", "cat": "Indicateurs", "qr": false}, {"page": 9, "code": "$MOTO#0", "label": "Disable", "cat": "Indicateurs", "qr": false}, {"page": 9, "code": "$MOTO#1", "label": "Enable", "cat": "Indicateurs", "qr": false}, {"page": 10, "code": "%#IFSNO$2", "label": "* USB keyboard mode", "cat": "Indicateurs", "qr": false}, {"page": 11, "code": "%#IFSNO$3", "label": "USB virtual serial port mode", "cat": "USB", "qr": false}, {"page": 11, "code": "%000604", "label": "* Wired/wireless automatic selection turns on", "cat": "USB", "qr": false}, {"page": 11, "code": "%000605", "label": "Wired/wireless automatic selection off", "cat": "USB", "qr": false}, {"page": 11, "code": "%KB#SP1", "label": "* top speed", "cat": "USB", "qr": false}, {"page": 11, "code": "%KB#SP4", "label": "top speed", "cat": "USB", "qr": false}, {"page": 12, "code": "%KB#SP7", "label": "medium speed", "cat": "USB", "qr": false}, {"page": 12, "code": "%KB#SP9", "label": "medium speed", "cat": "USB", "qr": false}, {"page": 12, "code": "%KB#SP?", "label": "Read keyboard speed", "cat": "USB", "qr": false}, {"page": 12, "code": "%KB#SP", "label": "Read keyboard speed", "cat": "USB", "qr": false}, {"page": 12, "code": "%#IFSNO$6", "label": "USB HID multi-key sending enabled", "cat": "USB", "qr": false}, {"page": 12, "code": "%#IFSNO$7", "label": "* USB HID multi-key sending off", "cat": "USB", "qr": false}, {"page": 13, "code": "%#IFSNO$", "label": "Current Interface Settings", "cat": "2.4G", "qr": false}, {"page": 13, "code": "%#IFSNO$1", "label": "2.4G transmission mode", "cat": "2.4G", "qr": false}, {"page": 13, "code": "$RF#CH0%", "label": "Start 2.4G pairing", "cat": "2.4G", "qr": false}, {"page": 14, "code": "$RF#CH02", "label": "one-to-one pairing", "cat": "2.4G", "qr": false}, {"page": 14, "code": "$RF#CH0$", "label": "One-to-one pairing", "cat": "2.4G", "qr": false}, {"page": 14, "code": "$USB#KEYM", "label": "Receiver as composite device", "cat": "2.4G", "qr": false}, {"page": 14, "code": "$USB#COM", "label": "Receiver as virtual serial port", "cat": "2.4G", "qr": false}, {"page": 14, "code": "$USB#KEY", "label": "receiver as keyboard", "cat": "2.4G", "qr": false}, {"page": 15, "code": "%KB#SP", "label": "Read keyboard speed", "cat": "2.4G", "qr": false}, {"page": 15, "code": "$USB#KEY", "label": "receiver keyboard high speed", "cat": "2.4G", "qr": false}, {"page": 15, "code": "$USB#KEY4", "label": "Receiver Keyboard Medium Speed", "cat": "2.4G", "qr": false}, {"page": 15, "code": "$USB#KEY9", "label": "Receiver Keyboard Low Speed", "cat": "2.4G", "qr": false}, {"page": 16, "code": "%KB#SPFF", "label": "SRAM cache switch", "cat": "2.4G", "qr": false}, {"page": 16, "code": "%KB#SPFC", "label": "Offline caching switch", "cat": "2.4G", "qr": false}, {"page": 16, "code": "%#IFSNO$", "label": "Current Interface Settings", "cat": "2.4G", "qr": false}, {"page": 17, "code": "%#IFSNO$4", "label": "Bluetooth Transmission", "cat": "Bluetooth", "qr": false}, {"page": 17, "code": "AT+MODE=2", "label": "Bluetooth HID Keyboard (Default)", "cat": "Bluetooth", "qr": false}, {"page": 17, "code": "AT+MODE=1", "label": "Bluetooth SPP Serial Port", "cat": "Bluetooth", "qr": false}, {"page": 17, "code": "AT+MODE=3", "label": "Bluetooth BLE Serial Port", "cat": "Bluetooth", "qr": false}, {"page": 17, "code": "%BTDONGLE#", "label": "Bluetooth cradle transmission mode", "cat": "Bluetooth", "qr": false}, {"page": 18, "code": "%%ALL-CH", "label": "Clear Bluetooth Pairing", "cat": "Bluetooth", "qr": false}, {"page": 18, "code": "%%0S", "label": "iOS pop up/hide keyboard", "cat": "Bluetooth", "qr": false}, {"page": 18, "code": "%%0H3", "label": "Press and hold the trigger for 4 seconds to toggle the iOS on-screen keyboard", "cat": "Bluetooth", "qr": false}, {"page": 19, "code": "%%0HH", "label": "Double-press the trigger to toggle the iOS on-screen keyboard", "cat": "Bluetooth", "qr": false}, {"page": 19, "code": "%%0AP", "label": "Pop up iOS keyboard switch after sending", "cat": "Bluetooth", "qr": false}, {"page": 19, "code": "%%0HL", "label": "Windows Caps Lock detection switch", "cat": "Bluetooth", "qr": false}, {"page": 19, "code": "%%0H8", "label": "Press and hold the trigger for 8 seconds to toggle RF/BT switching", "cat": "Bluetooth", "qr": false}, {"page": 20, "code": "AT+HIDDLY", "label": "Read Bluetooth HID delay", "cat": "Bluetooth", "qr": false}, {"page": 20, "code": "AT+HIDDLY=2", "label": "High speed (2 ms)", "cat": "Bluetooth", "qr": false}, {"page": 20, "code": "AT+HIDDLY=6", "label": "High speed (6 ms)", "cat": "Bluetooth", "qr": false}, {"page": 20, "code": "AT+HIDDLY=10", "label": "* Medium speed (10 ms)", "cat": "Bluetooth", "qr": false}, {"page": 20, "code": "AT+HIDDLY=18", "label": "Medium speed (18 ms)", "cat": "Bluetooth", "qr": false}, {"page": 20, "code": "AT+HIDDLY=25", "label": "Low speed (25 ms)", "cat": "Bluetooth", "qr": false}, {"page": 20, "code": "AT+HIDDLY=30", "label": "Low speed (30 ms)", "cat": "Bluetooth", "qr": false}, {"page": 21, "code": "%%0AS", "label": "Bluetooth connection status non-sleep switch", "cat": "Bluetooth", "qr": false}, {"page": 21, "code": "$KEY#M0", "label": "\\* Combine-Key Off", "cat": "Bluetooth", "qr": false}, {"page": 21, "code": "$KEY#M1", "label": "Ctrl+ Key Config1", "cat": "Bluetooth", "qr": false}, {"page": 22, "code": "$KEY#M2", "label": "Alt+ Key Config2", "cat": "Clavier", "qr": false}, {"page": 22, "code": "$KEY#M3", "label": "Normal-Key Config3", "cat": "Clavier", "qr": false}, {"page": 22, "code": "$KEY#M4", "label": "Ctrl+ Key Config4", "cat": "Clavier", "qr": false}, {"page": 22, "code": "$KEY#M5", "label": "Alt+ Key Config5", "cat": "Clavier", "qr": false}, {"page": 22, "code": "%LKLED#0", "label": "normal", "cat": "Clavier", "qr": false}, {"page": 22, "code": "%LKLED#1", "label": "Swap case", "cat": "Clavier", "qr": false}, {"page": 23, "code": "%LKLED#2", "label": "all caps", "cat": "Clavier", "qr": false}, {"page": 23, "code": "%LKLED#3", "label": "all lowercase", "cat": "Clavier", "qr": false}, {"page": 23, "code": "%LKLED#4", "label": "Num Lock Settings", "cat": "Clavier", "qr": false}, {"page": 23, "code": "%LKLED#5", "label": "Num Lock on", "cat": "Clavier", "qr": false}, {"page": 24, "code": "%CHARSET#", "label": "Read the current character set settings", "cat": "Clavier", "qr": true}, {"page": 24, "code": "%CHARSET#0", "label": "automatic", "cat": "Clavier", "qr": true}, {"page": 25, "code": "%CHARSET#1", "label": "GBK / BIG5 / HANGUL / SJIS", "cat": "Clavier", "qr": true}, {"page": 25, "code": "%CHARSET#3", "label": "ISO/IEC 8859", "cat": "Clavier", "qr": true}, {"page": 26, "code": "%CHARSET#2", "label": "UTF8（Word）", "cat": "Clavier", "qr": true}, {"page": 26, "code": "%CHARSET#21", "label": "UTF8（Txt）", "cat": "Clavier", "qr": true}, {"page": 27, "code": "%CHARSET#4", "label": "Normal mode", "cat": "Clavier", "qr": true}, {"page": 28, "code": "$KB#OS", "label": "Read the current receiving device settings", "cat": "Clavier", "qr": false}, {"page": 28, "code": "$KB#OS0", "label": "Windows device", "cat": "Clavier", "qr": false}, {"page": 28, "code": "$KB#OS1", "label": "iPhone/iPad/Mac devices", "cat": "Clavier", "qr": false}, {"page": 28, "code": "$KB#OS2", "label": "Android device", "cat": "Clavier", "qr": false}, {"page": 29, "code": "$LAN#", "label": "Read the current keyboard layout", "cat": "Langue", "qr": false}, {"page": 29, "code": "$LAN#EN", "label": "* US English keyboard", "cat": "Langue", "qr": false}, {"page": 29, "code": "$LAN#FR", "label": "French French keyboard", "cat": "Langue", "qr": false}, {"page": 29, "code": "$LAN#GE", "label": "german german keyboard", "cat": "Langue", "qr": false}, {"page": 29, "code": "$LAN#IT", "label": "Italian keyboard", "cat": "Langue", "qr": false}, {"page": 30, "code": "$LAN#PT", "label": "Portuguese keyboard", "cat": "Langue", "qr": false}, {"page": 30, "code": "$LAN#ES", "label": "spanish keyboard", "cat": "Langue", "qr": false}, {"page": 30, "code": "$LAN#TK", "label": "Turkish Q keyboard", "cat": "Langue", "qr": false}, {"page": 30, "code": "$LAN#TF", "label": "Turkish F keyboard", "cat": "Langue", "qr": false}, {"page": 30, "code": "$LAN#UK", "label": "British English keyboard", "cat": "Langue", "qr": false}, {"page": 30, "code": "$LAN#CS", "label": "Czech keyboard", "cat": "Langue", "qr": false}, {"page": 31, "code": "$LAN#CY", "label": "Czech standard keyboard", "cat": "Langue", "qr": false}, {"page": 31, "code": "$LAN#HU", "label": "Hungarian keyboard", "cat": "Langue", "qr": false}, {"page": 31, "code": "$LAN#FB", "label": "Belgian French keyboard", "cat": "Langue", "qr": false}, {"page": 31, "code": "$LAN#PB", "label": "Brazilian Portuguese keyboard", "cat": "Langue", "qr": false}, {"page": 31, "code": "$LAN#FC", "label": "Canadian French (traditional) keyboard", "cat": "Langue", "qr": false}, {"page": 32, "code": "$LAN#HR", "label": "Croatian keyboard", "cat": "Langue", "qr": false}, {"page": 32, "code": "$LAN#SK", "label": "Slovak QWERTY keyboard", "cat": "Langue", "qr": false}, {"page": 32, "code": "$LAN#SQ", "label": "Slovak keyboard", "cat": "Langue", "qr": false}, {"page": 32, "code": "$LAN#DA", "label": "Danish keyboard", "cat": "Langue", "qr": false}, {"page": 32, "code": "$LAN#FI", "label": "Finnish keyboard", "cat": "Langue", "qr": false}, {"page": 32, "code": "$LAN#EL", "label": "Latin American Spanish keyboard", "cat": "Langue", "qr": false}, {"page": 33, "code": "$LAN#NL", "label": "Dutch keyboard", "cat": "Langue", "qr": false}, {"page": 33, "code": "$LAN#NO", "label": "Norwegian keyboard", "cat": "Langue", "qr": false}, {"page": 33, "code": "$LAN#PL", "label": "Polish keyboard", "cat": "Langue", "qr": false}, {"page": 33, "code": "$LAN#SR", "label": "Serbian Latin keyboard", "cat": "Langue", "qr": false}, {"page": 33, "code": "$LAN#SL", "label": "Slovenian keyboard", "cat": "Langue", "qr": false}, {"page": 34, "code": "$LAN#SV", "label": "Swedish keyboard", "cat": "Langue", "qr": false}, {"page": 34, "code": "$LAN#DS", "label": "Swiss German keyboard", "cat": "Langue", "qr": false}, {"page": 34, "code": "$LAN#JP", "label": "Japanese keyboard", "cat": "Langue", "qr": false}, {"page": 34, "code": "$LAN#TH", "label": "Thai keyboard", "cat": "Langue", "qr": false}, {"page": 35, "code": "$LAN#AG", "label": "ALT international keyboard", "cat": "Langue", "qr": false}, {"page": 35, "code": "$LAN#RU", "label": "ALT single-byte special character keyboard", "cat": "Langue", "qr": false}, {"page": 36, "code": "$SCAN#2", "label": "Add Prefix", "cat": "Données", "qr": false}, {"page": 36, "code": "$SCAN#1", "label": "Add Suffix", "cat": "Données", "qr": false}, {"page": 36, "code": "$SCAN#4", "label": "Clear all prefixes", "cat": "Données", "qr": false}, {"page": 36, "code": "$SCAN#3", "label": "Clear all suffixes", "cat": "Données", "qr": false}, {"page": 36, "code": "$SCAN#5", "label": "Hide Leading Characters", "cat": "Données", "qr": false}, {"page": 36, "code": "$SCAN#6", "label": "Hide Middle Section Start Position", "cat": "Données", "qr": false}, {"page": 37, "code": "$SCAN#7", "label": "Hide Middle Section Length", "cat": "Données", "qr": false}, {"page": 37, "code": "$SCAN#8", "label": "Hide Trailing Characters", "cat": "Données", "qr": false}, {"page": 37, "code": "$NO#0", "label": "Numeric Setup Code 0", "cat": "Données", "qr": false}, {"page": 37, "code": "$NO#1", "label": "Numeric Setup Code 1", "cat": "Données", "qr": false}, {"page": 37, "code": "$NO#2", "label": "Numeric Setup Code 2", "cat": "Données", "qr": false}, {"page": 38, "code": "$NO#3", "label": "Numeric Setup Code 3", "cat": "Données", "qr": false}, {"page": 38, "code": "$NO#4", "label": "Numeric Setup Code 4", "cat": "Données", "qr": false}, {"page": 38, "code": "$NO#5", "label": "Numeric Setup Code 5", "cat": "Données", "qr": false}, {"page": 38, "code": "$NO#6", "label": "Numeric Setup Code 6", "cat": "Données", "qr": false}, {"page": 38, "code": "$NO#7", "label": "Numeric Setup Code 7", "cat": "Données", "qr": false}, {"page": 38, "code": "$NO#8", "label": "Numeric Setup Code 8", "cat": "Données", "qr": false}, {"page": 39, "code": "$NO#9", "label": "Numeric Setup Code 9", "cat": "Données", "qr": false}, {"page": 39, "code": "$NO#A", "label": "Numeric Setup Code A", "cat": "Données", "qr": false}, {"page": 39, "code": "$NO#B", "label": "Numeric Setup Code B", "cat": "Données", "qr": false}, {"page": 39, "code": "$NO#C", "label": "Numeric Setup Code C", "cat": "Données", "qr": false}, {"page": 39, "code": "$NO#D", "label": "Numeric Setup Code D", "cat": "Données", "qr": false}, {"page": 39, "code": "$NO#E", "label": "Numeric Setup Code E", "cat": "Données", "qr": false}, {"page": 40, "code": "$NO#F", "label": "Numeric Setup Code F", "cat": "Données", "qr": false}, {"page": 40, "code": "$DATA#0", "label": "Default Output Format", "cat": "Données", "qr": false}, {"page": 40, "code": "$DATA#1", "label": "Allow Suffix Output", "cat": "Données", "qr": false}, {"page": 40, "code": "$DATA#2", "label": "Allow Prefix Output", "cat": "Données", "qr": false}, {"page": 40, "code": "$DATA#5", "label": "Allow Hiding Leading Data", "cat": "Données", "qr": false}, {"page": 40, "code": "$DATA#4", "label": "Allow Hiding Middle Data", "cat": "Données", "qr": false}, {"page": 41, "code": "$DATA#3", "label": "Allow Hiding Trailing Data", "cat": "Données", "qr": false}, {"page": 43, "code": "$DATA#700A#", "label": "Read replacement settings", "cat": "Données", "qr": false}, {"page": 43, "code": "$DATA#7000#", "label": "Clear replacement settings", "cat": "Données", "qr": false}, {"page": 43, "code": "$DATA#7001\\x1D02GS#", "label": "Character replacement operation: GS to text GS", "cat": "Données", "qr": false}, {"page": 43, "code": "$DATA#7001\n01\r#", "label": "Character replacement operation: LF to CR", "cat": "Données", "qr": false}, {"page": 44, "code": "$TERM#0", "label": "None (Default)", "cat": "Données", "qr": false}, {"page": 44, "code": "$TERM#1", "label": "Carriage Return CR", "cat": "Données", "qr": false}, {"page": 44, "code": "$TERM#2", "label": "Tab TAB", "cat": "Données", "qr": false}, {"page": 44, "code": "$TERM#3", "label": "Carriage Return + Line Feed CRLF", "cat": "Données", "qr": false}, {"page": 44, "code": "$TERM#4", "label": "Line Feed LF", "cat": "Données", "qr": false}, {"page": 45, "code": "$DATA#AI0", "label": "Raw Format (Default)", "cat": "Données", "qr": true}, {"page": 45, "code": "$DATA#AI1", "label": "Add Parentheses", "cat": "Données", "qr": true}, {"page": 46, "code": "$DATA#AI1\r#", "label": "Add brackets and separate with CR", "cat": "Données", "qr": true}, {"page": 46, "code": "$DATA#AI1\t#", "label": "Add brackets and separate them with TAB", "cat": "Données", "qr": true}, {"page": 46, "code": "%SCMD#00#", "label": "Key scan mode (default)", "cat": "Données", "qr": false}, {"page": 47, "code": "%SCMD#01#", "label": "Continuous scan mode", "cat": "Lecture", "qr": false}, {"page": 47, "code": "%SCMD#02#", "label": "Key pulse scan mode", "cat": "Lecture", "qr": false}, {"page": 47, "code": "%SCMD#03#", "label": "Host trigger mode (only applicable to some customized models)", "cat": "Lecture", "qr": false}, {"page": 47, "code": "%SCMD#04#", "label": "Batch scanning mode (only applicable to some customized models)", "cat": "Lecture", "qr": false}, {"page": 48, "code": "%SCMD#3000D", "label": "3 seconds (default)", "cat": "Lecture", "qr": false}, {"page": 48, "code": "%SCMD#6000D", "label": "6 seconds", "cat": "Lecture", "qr": false}, {"page": 48, "code": "%SCMD#0500I", "label": "0.5 seconds (default)", "cat": "Lecture", "qr": false}, {"page": 48, "code": "%SCMD#1000I", "label": "1 second", "cat": "Lecture", "qr": false}, {"page": 48, "code": "3030EA0", "label": "* Disable", "cat": "Lecture", "qr": false}, {"page": 48, "code": "3030EA1", "label": "Enable", "cat": "Lecture", "qr": false}, {"page": 49, "code": "3030080", "label": "* Disable", "cat": "Moteur", "qr": false}, {"page": 49, "code": "3030081", "label": "Enable", "cat": "Moteur", "qr": false}, {"page": 49, "code": "3030AA0", "label": "* Special invoice", "cat": "Moteur", "qr": false}, {"page": 49, "code": "3030AA1", "label": "Ordinary invoice", "cat": "Moteur", "qr": false}, {"page": 49, "code": "2050200", "label": "* Key hold (level)", "cat": "Moteur", "qr": false}, {"page": 50, "code": "2050202", "label": "Single key trigger (pulse)", "cat": "Moteur", "qr": false}, {"page": 50, "code": "2050204", "label": "Continuous Mode", "cat": "Moteur", "qr": false}, {"page": 50, "code": "2050209", "label": "Auto sensing mode", "cat": "Moteur", "qr": false}, {"page": 51, "code": "30500305FF", "label": "Single scan time", "cat": "Moteur", "qr": false}, {"page": 51, "code": "3030CF0", "label": "Unlimited", "cat": "Moteur", "qr": false}, {"page": 51, "code": "3030CF3", "label": "3 s", "cat": "Moteur", "qr": false}, {"page": 51, "code": "3030CF5", "label": "5 s", "cat": "Moteur", "qr": false}, {"page": 51, "code": "3030CFA", "label": "10 s", "cat": "Moteur", "qr": false}, {"page": 52, "code": "3030CFB", "label": "15 s", "cat": "Moteur", "qr": false}, {"page": 52, "code": "3030CFC", "label": "20 s", "cat": "Moteur", "qr": false}, {"page": 52, "code": "3030CFD", "label": "30 s", "cat": "Moteur", "qr": false}, {"page": 52, "code": "3030CFE", "label": "60 s", "cat": "Moteur", "qr": false}, {"page": 52, "code": "3050120063", "label": "Continuous reading interval", "cat": "Moteur", "qr": false}, {"page": 53, "code": "3F30000003", "label": "Same code delay", "cat": "Moteur", "qr": false}, {"page": 53, "code": "3030C90", "label": "No delay", "cat": "Moteur", "qr": false}, {"page": 54, "code": "3030C91", "label": "1 s Delay", "cat": "Moteur", "qr": false}, {"page": 54, "code": "3030C93", "label": "3 s Delay", "cat": "Moteur", "qr": false}, {"page": 54, "code": "3030C95", "label": "5 s Delay", "cat": "Moteur", "qr": false}, {"page": 54, "code": "3030C97", "label": "7 s Delay", "cat": "Moteur", "qr": false}, {"page": 54, "code": "3030C99", "label": "Unlimited Delay (Disable Same-Code Reads)", "cat": "Moteur", "qr": false}, {"page": 55, "code": "2051702", "label": "Code ID", "cat": "Moteur", "qr": false}, {"page": 55, "code": "2051701", "label": "AIM ID", "cat": "Moteur", "qr": false}, {"page": 55, "code": "2051700", "label": "* None", "cat": "Moteur", "qr": false}, {"page": 58, "code": "3030050", "label": "* Disable", "cat": "Moteur", "qr": false}, {"page": 59, "code": "3030051", "label": "Carriage return and line feed CR LF", "cat": "Moteur", "qr": false}, {"page": 59, "code": "3030052", "label": "Carriage Return CR", "cat": "Moteur", "qr": false}, {"page": 59, "code": "3030053", "label": "TAB", "cat": "Moteur", "qr": false}, {"page": 59, "code": "3030054", "label": "Enter Enter Enter CR CR", "cat": "Moteur", "qr": false}, {"page": 59, "code": "3030055", "label": "Carriage return and line feed Carriage return and line feed CR LF CR LF", "cat": "Moteur", "qr": false}, {"page": 59, "code": "6063C00", "label": "* Disable", "cat": "Moteur", "qr": false}, {"page": 60, "code": "6063C01", "label": "Enable", "cat": "Moteur", "qr": false}, {"page": 60, "code": "3030910", "label": "* Disable", "cat": "Moteur", "qr": false}, {"page": 60, "code": "3030911", "label": "Enable", "cat": "Moteur", "qr": false}, {"page": 61, "code": "3030110", "label": "Disable", "cat": "Symbologies", "qr": false}, {"page": 61, "code": "3030111", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 61, "code": "3030500", "label": "Disable", "cat": "Symbologies", "qr": false}, {"page": 61, "code": "3030501", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 61, "code": "3030900", "label": "Disable all barcodes", "cat": "Symbologies", "qr": false}, {"page": 61, "code": "3030901", "label": "Enable all barcodes", "cat": "Symbologies", "qr": false}, {"page": 62, "code": "2051501", "label": "* Linear safety level 1", "cat": "Symbologies", "qr": false}, {"page": 62, "code": "2051502", "label": "Linear safety level 2", "cat": "Symbologies", "qr": false}, {"page": 62, "code": "2051503", "label": "Linear safety level 3", "cat": "Symbologies", "qr": false}, {"page": 62, "code": "2051504", "label": "Linear safety level 4", "cat": "Symbologies", "qr": false}, {"page": 63, "code": "1000011", "label": "* Enable UPC-A", "cat": "Symbologies", "qr": false}, {"page": 63, "code": "1000010", "label": "Disable UPC-A", "cat": "Symbologies", "qr": false}, {"page": 63, "code": "2030100", "label": "No preamble (<DATA>)", "cat": "Symbologies", "qr": false}, {"page": 63, "code": "2030101", "label": "* System characters (<SYSTEM CHARACTER> <DATA>)", "cat": "Symbologies", "qr": false}, {"page": 63, "code": "2030102", "label": "System characters & country code (<COUNTRY CODE> <SYSTEM CHARACTER> <DATA>)", "cat": "Symbologies", "qr": false}, {"page": 64, "code": "1020021", "label": "* Transmit UPC-A check digit", "cat": "Symbologies", "qr": false}, {"page": 64, "code": "1020020", "label": "Do not transmit UPC-A check digit", "cat": "Symbologies", "qr": false}, {"page": 64, "code": "3030401", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 64, "code": "3030400", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 64, "code": "3030411", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 64, "code": "3030410", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 65, "code": "3030421", "label": "To enable UPC-A, the additional code must be read", "cat": "Symbologies", "qr": false}, {"page": 65, "code": "3030420", "label": "Disable UPC-A Additional code must be read", "cat": "Symbologies", "qr": false}, {"page": 65, "code": "1000021", "label": "* Enable UPC-E", "cat": "Symbologies", "qr": false}, {"page": 65, "code": "1000020", "label": "Disable UPC-E", "cat": "Symbologies", "qr": false}, {"page": 65, "code": "2030000", "label": "No preamble (<DATA>)", "cat": "Symbologies", "qr": false}, {"page": 66, "code": "2030001", "label": "* System characters (<SYSTEM CHARACTER> <DATA>)", "cat": "Symbologies", "qr": false}, {"page": 66, "code": "2030002", "label": "System characters & country code (<COUNTRY CODE> <SYSTEM CHARACTER> <DATA>)", "cat": "Symbologies", "qr": false}, {"page": 66, "code": "1020031", "label": "* Transmit UPC-E check digit", "cat": "Symbologies", "qr": false}, {"page": 66, "code": "1020030", "label": "Do not transmit UPC-E check digit", "cat": "Symbologies", "qr": false}, {"page": 66, "code": "1020001", "label": "Convert UPC-E to UPC-A", "cat": "Symbologies", "qr": false}, {"page": 67, "code": "1020000", "label": "* Does not convert UPC-E to UPC-A", "cat": "Symbologies", "qr": false}, {"page": 67, "code": "30303D1", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 67, "code": "30303D0", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 67, "code": "30303E1", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 67, "code": "30303E0", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 67, "code": "30303F1", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 68, "code": "30303F0", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 68, "code": "3030150", "label": "* Disable UPC-E1", "cat": "Symbologies", "qr": false}, {"page": 68, "code": "3030151", "label": "Enable UPC-E1", "cat": "Symbologies", "qr": false}, {"page": 68, "code": "1000041", "label": "* Enable EAN-8", "cat": "Symbologies", "qr": false}, {"page": 68, "code": "1000040", "label": "Disable EAN-8", "cat": "Symbologies", "qr": false}, {"page": 69, "code": "1020011", "label": "Enable EAN-8 zero extension", "cat": "Symbologies", "qr": false}, {"page": 69, "code": "1020010", "label": "* Disable EAN-8 zero extension", "cat": "Symbologies", "qr": false}, {"page": 69, "code": "3030371", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 69, "code": "3030370", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 69, "code": "3030381", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 70, "code": "3030380", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 70, "code": "3030391", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 70, "code": "3030390", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 70, "code": "3030800", "label": "Disable", "cat": "Symbologies", "qr": false}, {"page": 70, "code": "3030801", "label": "* Enable", "cat": "Symbologies", "qr": false}, {"page": 70, "code": "1000031", "label": "* Enable EAN-13", "cat": "Symbologies", "qr": false}, {"page": 71, "code": "1000030", "label": "Disable EAN-13", "cat": "Symbologies", "qr": false}, {"page": 71, "code": "30303A1", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 71, "code": "30303A0", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 71, "code": "30303B1", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 71, "code": "30303B0", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 71, "code": "30303C1", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 72, "code": "30303C0", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 72, "code": "3030160", "label": "Disable EAN-13 sending check characters", "cat": "Symbologies", "qr": false}, {"page": 72, "code": "3030161", "label": "Enable EAN-13 to send check characters", "cat": "Symbologies", "qr": false}, {"page": 72, "code": "1000231", "label": "Enable Bookland EAN", "cat": "Symbologies", "qr": false}, {"page": 72, "code": "1000230", "label": "* Disable Bookland EAN", "cat": "Symbologies", "qr": false}, {"page": 73, "code": "1000101", "label": "* Enable Code 128", "cat": "Symbologies", "qr": false}, {"page": 73, "code": "1000100", "label": "Disable Code 128", "cat": "Symbologies", "qr": false}, {"page": 73, "code": "3030351", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 73, "code": "3030350", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 74, "code": "F3118485F50000005", "label": "Code 128 any length", "cat": "Symbologies", "qr": false}, {"page": 74, "code": "F0118485F50000005", "label": "Code 128 specifies the length", "cat": "Symbologies", "qr": false}, {"page": 74, "code": "1040331", "label": "GS1-128 (formerly UCC/EAN-128)", "cat": "Symbologies", "qr": false}, {"page": 74, "code": "1040330", "label": "* Enable GS1-128", "cat": "Symbologies", "qr": false}, {"page": 74, "code": "3030361", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 74, "code": "3030360", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 75, "code": "F3118687F50000007", "label": "UCC/EAN-128 any length", "cat": "Symbologies", "qr": false}, {"page": 75, "code": "F0118687F50000007", "label": "UCC/EAN-128 specified length", "cat": "Symbologies", "qr": false}, {"page": 75, "code": "1000331", "label": "* Enable ISBT 128", "cat": "Symbologies", "qr": false}, {"page": 76, "code": "1000330", "label": "any length", "cat": "Symbologies", "qr": false}, {"page": 76, "code": "1000001", "label": "* Enable Code 39", "cat": "Symbologies", "qr": false}, {"page": 76, "code": "1000000", "label": "Disable Code 39", "cat": "Symbologies", "qr": false}, {"page": 77, "code": "F3010001013700000", "label": "Code 39 any length", "cat": "Symbologies", "qr": false}, {"page": 77, "code": "F0010001013700000", "label": "Code 39 specifies the length", "cat": "Symbologies", "qr": false}, {"page": 77, "code": "1020041", "label": "Verify Code 39 check digit", "cat": "Symbologies", "qr": false}, {"page": 77, "code": "1020040", "label": "* Do not verify Code 39 check digit", "cat": "Symbologies", "qr": false}, {"page": 77, "code": "1020241", "label": "Transmit Code 39 check digit", "cat": "Symbologies", "qr": false}, {"page": 78, "code": "1020240", "label": "* Do not transmit Code 39 check digit", "cat": "Symbologies", "qr": false}, {"page": 78, "code": "1020111", "label": "Enable Code 39 Full ASCII", "cat": "Symbologies", "qr": false}, {"page": 78, "code": "1020110", "label": "* Disable Code 39 Full ASCII", "cat": "Symbologies", "qr": false}, {"page": 78, "code": "3030300", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 78, "code": "3030301", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 79, "code": "1020300", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 79, "code": "1020301", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 79, "code": "1020320", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 79, "code": "1020321", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 79, "code": "3030190", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 79, "code": "3030191", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 80, "code": "30301A0", "label": "* Transmit check digit 0x00", "cat": "Symbologies", "qr": false}, {"page": 80, "code": "30301A1", "label": "Enable transmission of Code 32 check digits", "cat": "Symbologies", "qr": false}, {"page": 80, "code": "1000111", "label": "Enable Code 93", "cat": "Symbologies", "qr": false}, {"page": 80, "code": "1000110", "label": "* Disable Code 93", "cat": "Symbologies", "qr": false}, {"page": 81, "code": "F3010A0B023700011", "label": "Code 93 any length", "cat": "Symbologies", "qr": false}, {"page": 81, "code": "F0010A0B023700011", "label": "Code 93 specifies the length", "cat": "Symbologies", "qr": false}, {"page": 81, "code": "1000121", "label": "Enable Code 11", "cat": "Symbologies", "qr": false}, {"page": 81, "code": "1000120", "label": "* Disable Code 11", "cat": "Symbologies", "qr": false}, {"page": 82, "code": "F3010C0D013700012", "label": "Code 11 any length", "cat": "Symbologies", "qr": false}, {"page": 82, "code": "F0010C0D013700012", "label": "Code 11 specifies the length", "cat": "Symbologies", "qr": false}, {"page": 82, "code": "2051200", "label": "* Enable", "cat": "Symbologies", "qr": false}, {"page": 83, "code": "2051201", "label": "a check digit", "cat": "Symbologies", "qr": false}, {"page": 83, "code": "2051202", "label": "two check digits", "cat": "Symbologies", "qr": false}, {"page": 83, "code": "1020141", "label": "Transmit Code 11 check digit", "cat": "Symbologies", "qr": false}, {"page": 83, "code": "1020140", "label": "* Code 11 check digit is not transmitted", "cat": "Symbologies", "qr": false}, {"page": 83, "code": "1000061", "label": "* Enable Interleaved 2 of 5", "cat": "Symbologies", "qr": false}, {"page": 84, "code": "1000060", "label": "Disable Interleaved 2 of 5", "cat": "Symbologies", "qr": false}, {"page": 84, "code": "F3010809024400006", "label": "Interleaved 2 of 5 any length", "cat": "Symbologies", "qr": false}, {"page": 84, "code": "F0010809024400006", "label": "Interleaved 2 of 5 specified length", "cat": "Symbologies", "qr": false}, {"page": 85, "code": "2051E00", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 85, "code": "2051E01", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 85, "code": "1020211", "label": "Transmit I 2 of 5 check digits", "cat": "Symbologies", "qr": false}, {"page": 85, "code": "1020210", "label": "* Do not transmit I 2 of 5 check digits", "cat": "Symbologies", "qr": false}, {"page": 85, "code": "1000051", "label": "Enable Discrete 2 of 5", "cat": "Symbologies", "qr": false}, {"page": 85, "code": "1000050", "label": "* Disable Discrete 2 of 5", "cat": "Symbologies", "qr": false}, {"page": 86, "code": "F3010607023700005", "label": "Discrete 2 of 5 any length", "cat": "Symbologies", "qr": false}, {"page": 86, "code": "F0010607023700005", "label": "Discrete 2 of 5 specified length", "cat": "Symbologies", "qr": false}, {"page": 86, "code": "3030481", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 87, "code": "3030480", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 87, "code": "3030491", "label": "Enable Discrete 2 of 5 to send check characters", "cat": "Symbologies", "qr": false}, {"page": 87, "code": "3030490", "label": "Disable Discrete 2 of 5 Send check characters", "cat": "Symbologies", "qr": false}, {"page": 87, "code": "3030201", "label": "Enable Matrix 25", "cat": "Symbologies", "qr": false}, {"page": 87, "code": "3030200", "label": "* Disable Matrix 25", "cat": "Symbologies", "qr": false}, {"page": 87, "code": "3030211", "label": "Enable Matrix 25 checksum confirmation", "cat": "Symbologies", "qr": false}, {"page": 88, "code": "3030210", "label": "* Disable Matrix 25 checksum confirmation", "cat": "Symbologies", "qr": false}, {"page": 88, "code": "3030221", "label": "Enable Matrix 25 transmission check characters", "cat": "Symbologies", "qr": false}, {"page": 88, "code": "3030220", "label": "* Disable Matrix 25 transmission check characters", "cat": "Symbologies", "qr": false}, {"page": 89, "code": "F3118081F50000001", "label": "Matrix 25 any length", "cat": "Symbologies", "qr": false}, {"page": 89, "code": "F0118081F50000001", "label": "Matrix 25 specifies the length", "cat": "Symbologies", "qr": false}, {"page": 89, "code": "3030230", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 89, "code": "3030231", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 89, "code": "3030240", "label": "* Disable Standard 25 checksum confirmation", "cat": "Symbologies", "qr": false}, {"page": 89, "code": "3030241", "label": "Enable Standard 25 checksum confirmation", "cat": "Symbologies", "qr": false}, {"page": 90, "code": "3030250", "label": "* Disable Standard 25 transmission check characters", "cat": "Symbologies", "qr": false}, {"page": 90, "code": "3030251", "label": "Enable Standard 25 transmission check characters", "cat": "Symbologies", "qr": false}, {"page": 90, "code": "F3118283F50000003", "label": "Standard 25 any length", "cat": "Symbologies", "qr": false}, {"page": 90, "code": "F0118283F50000003", "label": "Standard 25 specified length", "cat": "Symbologies", "qr": false}, {"page": 91, "code": "1000071", "label": "Enable Codabar", "cat": "Symbologies", "qr": false}, {"page": 91, "code": "1000070", "label": "* Disable Codabar", "cat": "Symbologies", "qr": false}, {"page": 91, "code": "F3010203023700007", "label": "Codabar any length", "cat": "Symbologies", "qr": false}, {"page": 92, "code": "F0010203023700007", "label": "Codabar specifies the length", "cat": "Symbologies", "qr": false}, {"page": 92, "code": "30304C1", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 92, "code": "30304C0", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 92, "code": "30304D1", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 92, "code": "30304D0", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 92, "code": "1020061", "label": "Enable NOTIS editing", "cat": "Symbologies", "qr": false}, {"page": 93, "code": "1020060", "label": "* Disable NOTIS editing", "cat": "Symbologies", "qr": false}, {"page": 93, "code": "3030310", "label": "\\* ABCD/ABCD", "cat": "Symbologies", "qr": false}, {"page": 93, "code": "3030311", "label": "ABCD/TN*E", "cat": "Symbologies", "qr": false}, {"page": 93, "code": "3030320", "label": "* uppercase letter", "cat": "Symbologies", "qr": false}, {"page": 93, "code": "3030321", "label": "lowercase letters", "cat": "Symbologies", "qr": false}, {"page": 94, "code": "1000141", "label": "Enable MSI", "cat": "Symbologies", "qr": false}, {"page": 94, "code": "1000140", "label": "* Disable MSI", "cat": "Symbologies", "qr": false}, {"page": 94, "code": "F3010F10013700014", "label": "MSI arbitrary length", "cat": "Symbologies", "qr": false}, {"page": 94, "code": "F0010F10013700014", "label": "MSI specified length", "cat": "Symbologies", "qr": false}, {"page": 95, "code": "1020120", "label": "* An MSI check digit", "cat": "Symbologies", "qr": false}, {"page": 95, "code": "1020121", "label": "Two MSI check digits", "cat": "Symbologies", "qr": false}, {"page": 95, "code": "1020131", "label": "Transmit MSI check code", "cat": "Symbologies", "qr": false}, {"page": 95, "code": "1020130", "label": "* MSI check code is not transmitted", "cat": "Symbologies", "qr": false}, {"page": 95, "code": "1020230", "label": "MOD 10 / MOD 11", "cat": "Symbologies", "qr": false}, {"page": 96, "code": "1020231", "label": "\\* MOD 10 / MOD 10", "cat": "Symbologies", "qr": false}, {"page": 96, "code": "1000351", "label": "Enable GS1 DataBar/RSS", "cat": "Symbologies", "qr": false}, {"page": 96, "code": "1000350", "label": "* Disable GS1 DataBar/RSS", "cat": "Symbologies", "qr": false}, {"page": 96, "code": "3030261", "label": "* Enable", "cat": "Symbologies", "qr": false}, {"page": 96, "code": "3030260", "label": "Disable", "cat": "Symbologies", "qr": false}, {"page": 97, "code": "1000170", "label": "Disable PDF417", "cat": "Symbologies", "qr": false}, {"page": 97, "code": "1000171", "label": "* Enable PDF417", "cat": "Symbologies", "qr": false}, {"page": 97, "code": "3030610", "label": "* read only positive", "cat": "Symbologies", "qr": false}, {"page": 97, "code": "3030611", "label": "Read only invert", "cat": "Symbologies", "qr": false}, {"page": 97, "code": "3030612", "label": "Both forward and reverse phases can be read.", "cat": "Symbologies", "qr": false}, {"page": 97, "code": "1003250", "label": "Disable QR Code", "cat": "Symbologies", "qr": false}, {"page": 98, "code": "1003251", "label": "* Enable QR Code", "cat": "Symbologies", "qr": false}, {"page": 98, "code": "3030660", "label": "* ECI does not output", "cat": "Symbologies", "qr": false}, {"page": 98, "code": "3030661", "label": "ECI output", "cat": "Symbologies", "qr": false}, {"page": 98, "code": "3030670", "label": "* read only positive", "cat": "Symbologies", "qr": false}, {"page": 98, "code": "3030671", "label": "Read only invert", "cat": "Symbologies", "qr": false}, {"page": 98, "code": "3030672", "label": "Both forward and reverse phases can be read.", "cat": "Symbologies", "qr": false}, {"page": 99, "code": "6063A00", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 99, "code": "6063A01", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 99, "code": "1003240", "label": "Disable Data Matrix", "cat": "Symbologies", "qr": false}, {"page": 99, "code": "1003241", "label": "* Enable Data Matrix", "cat": "Symbologies", "qr": false}, {"page": 99, "code": "30306B0", "label": "* read only positive", "cat": "Symbologies", "qr": false}, {"page": 100, "code": "30306B1", "label": "Read only invert", "cat": "Symbologies", "qr": false}, {"page": 100, "code": "30306B2", "label": "Both forward and reverse phases can be read.", "cat": "Symbologies", "qr": false}, {"page": 100, "code": "30306C0", "label": "* ECI does not output", "cat": "Symbologies", "qr": false}, {"page": 100, "code": "30306C1", "label": "ECI output", "cat": "Symbologies", "qr": false}, {"page": 100, "code": "1003260", "label": "* Disable Maxi Code", "cat": "Symbologies", "qr": false}, {"page": 100, "code": "1003261", "label": "Enable Maxi Code", "cat": "Symbologies", "qr": false}, {"page": 101, "code": "1003280", "label": "* Disable Aztec Code", "cat": "Symbologies", "qr": false}, {"page": 101, "code": "1003281", "label": "Enable Aztec Code", "cat": "Symbologies", "qr": false}, {"page": 101, "code": "10032F0", "label": "* Disable Han Xin Code", "cat": "Symbologies", "qr": false}, {"page": 101, "code": "10032F1", "label": "Enable Han Xin Code", "cat": "Symbologies", "qr": false}, {"page": 101, "code": "3030710", "label": "* read only positive", "cat": "Symbologies", "qr": false}, {"page": 102, "code": "3030711", "label": "Read only invert", "cat": "Symbologies", "qr": false}, {"page": 102, "code": "3030712", "label": "Both forward and reverse phases can be read.", "cat": "Symbologies", "qr": false}, {"page": 102, "code": "3030330", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 102, "code": "3030331", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 102, "code": "3030451", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 102, "code": "3030450", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 103, "code": "3030461", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 103, "code": "3030460", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 103, "code": "3030471", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 103, "code": "3030470", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 104, "code": "F3118889F50000009", "label": "NEC-25 any length", "cat": "Symbologies", "qr": false}, {"page": 104, "code": "F0118889F50000009", "label": "NEC-25 specified length", "cat": "Symbologies", "qr": false}, {"page": 104, "code": "3030170", "label": "* Disable", "cat": "Symbologies", "qr": false}, {"page": 104, "code": "3030171", "label": "Enable", "cat": "Symbologies", "qr": false}, {"page": 104, "code": "A0", "label": "0", "cat": "Symbologies", "qr": false}, {"page": 105, "code": "A1", "label": "1", "cat": "Numérique", "qr": false}, {"page": 105, "code": "A2", "label": "2", "cat": "Numérique", "qr": false}, {"page": 105, "code": "A3", "label": "3", "cat": "Numérique", "qr": false}, {"page": 105, "code": "A4", "label": "4", "cat": "Numérique", "qr": false}, {"page": 105, "code": "A5", "label": "5", "cat": "Numérique", "qr": false}, {"page": 106, "code": "A6", "label": "6", "cat": "Numérique", "qr": false}, {"page": 106, "code": "A7", "label": "7", "cat": "Numérique", "qr": false}, {"page": 106, "code": "A8", "label": "8", "cat": "Numérique", "qr": false}, {"page": 106, "code": "A9", "label": "9", "cat": "Numérique", "qr": false}, {"page": 107, "code": "A-", "label": "Setup Code: Cancel", "cat": "Numérique", "qr": false}];
+
+const PAT128 = [
+"212222","222122","222221","121223","121322","131222","122213","122312","132212","221213",
+"221312","231212","112232","122132","122231","113222","123122","123221","223211","221132",
+"221231","213212","223112","312131","311222","321122","321221","312212","322112","322211",
+"212123","212321","232121","111323","131123","131321","112313","132113","132311","211313",
+"231113","231311","112133","112331","132131","113123","113321","133121","313121","211331",
+"231131","213113","213311","213131","311123","311321","331121","312113","312311","332111",
+"314111","221411","431111","111224","111422","121124","121421","141122","141221","112214",
+"112412","122114","122411","142112","142211","241211","221114","413111","241112","134111",
+"111242","121142","121241","114212","124112","124211","411212","421112","421211","212141",
+"214121","412121","111143","111341","131141","114113","114311","411113","411311","113141",
+"114131","311141","411131","211412","211214","211232","2331112"
+];
+
+function bestCharset(bytes) {
+  const allDigits = bytes.length >= 2 && bytes.length % 2 === 0 && bytes.every(b => b >= 48 && b <= 57);
+  if (allDigits) return "C";
+  const needA = bytes.some(b => b < 32);
+  const needB = bytes.some(b => b > 95);
+  if (needA && !needB) return "A";
+  return "B";
+}
+function codeValue(ch, set) {
+  if (set === "A") {
+    if (ch >= 32 && ch <= 95) return ch - 32;
+    if (ch < 32) return ch + 64;
+  }
+  if (set === "B") {
+    if (ch >= 32 && ch <= 127) return ch - 32;
+  }
+  throw new Error("Caractère hors Code 128 " + set + ": " + ch);
+}
+function encode128(text) {
+  const bytes = [];
+  for (const ch of text) bytes.push(ch.codePointAt(0) & 0xFF);
+  const set = bestCharset(bytes);
+  const start = set === "A" ? 103 : set === "C" ? 105 : 104;
+  const values = [start];
+  if (set === "C") {
+    for (let i = 0; i < bytes.length; i += 2) values.push((bytes[i]-48)*10 + (bytes[i+1]-48));
+  } else {
+    for (const b of bytes) values.push(codeValue(b, set));
+  }
+  let sum = values[0];
+  for (let i = 1; i < values.length; i++) sum += values[i] * i;
+  values.push(sum % 103);
+  values.push(106);
+  return values;
+}
+function svg128(text, {height=96, module=2} = {}) {
+  const values = encode128(text);
+  let x = 0;
+  const parts = [];
+  const quiet = module * 10;
+  x = quiet;
+  for (const v of values) {
+    const pat = PAT128[v];
+    let bar = true;
+    for (const n of pat) {
+      const w = Number(n) * module;
+      if (bar) parts.push(`<rect x="${x}" y="0" width="${w}" height="${height}" fill="#000"/>`);
+      x += w; bar = !bar;
+    }
+  }
+  x += quiet;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${x}" height="${height}" viewBox="0 0 ${x} ${height}" role="img">${parts.join("")}</svg>`;
+}
+function svgQR(text, size=180) {
+  const qr = qrcode(0, "M");
+  qr.addData(text, "Byte");
+  qr.make();
+  return qr.createSvgTag({ scalable: true, margin: 2, cellSize: 4 }).replace("<svg", `<svg width="${size}" height="${size}"`);
+}
+function visibleCode(code) {
+  return Array.from(code, ch => {
+    const c = ch.codePointAt(0);
+    if (c === 9) return "\\t";
+    if (c === 10) return "\\n";
+    if (c === 13) return "\\r";
+    if (c < 32 || c === 127) return "\\x" + c.toString(16).padStart(2,"0");
+    return ch;
+  }).join("");
+}
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+function hexdump(s) {
+  return Array.from(s, ch => ch.codePointAt(0).toString(16).padStart(2,"0")).join(" ");
+}
+function analyze(s) {
+  const tags = [];
+  if (s.includes("\r") && s.includes("\n")) tags.push("CRLF");
+  else if (s.includes("\r")) tags.push("CR");
+  else if (s.includes("\n")) tags.push("LF");
+  if (s.includes("\t")) tags.push("TAB");
+  tags.push(s.length + " " + t("chars"));
+  return tags;
+}
+
+const I18N = {"fr": {"search_ph": "Rechercher un réglage, une symbologie, une commande…", "search_clear": "Vider la recherche", "reception": "Réception clavier", "capture_on": "Capture active", "capture_help": "Ce champ reste focalisé, même après un clic sur un bouton. Décochez « Capture active » seulement pour taper dans la recherche ou les outils.", "capture_ph": "Prêt — scannez un code…", "select_all": "Tout sélectionner", "copy": "Copier", "waiting": "En attente", "history": "Historique", "clear": "Vider", "no_history": "Aucune réception pour l’instant.", "subtitle": "Configurateur · manuel v1.0.0", "tab_title": "Netum C750 — Configurateur", "tools": "Outils", "all_codes": "Tous les codes", "search": "Recherche", "search_lede": "{n} groupe(s) pour « {q} »", "all_lede": "{n} commandes extraites du manuel v1.0.0. Cliquez une ligne pour afficher le code-barres.", "col_page": "p.", "col_cat": "Catégorie", "col_label": "Libellé", "col_cmd": "Commande", "no_results": "Aucun résultat. Essayez « Tous les codes ».", "no_results_short": "Aucun résultat.", "badge_def": "défaut", "badge_ret": "réponse", "badge_dang": "attention", "badge_toggle": "bascule", "scan_tip": "Éclairez l’écran · cadrez le code · un bip confirme le réglage", "chars": "car.", "tools_lede": "Génère un seul code à scanner (format officiel $DATA#…#). Pour un nom Bluetooth, un QR AT+NAME est proposé.", "tools_affix": "Préfixe / suffixe en un code", "tools_affix_note": "Activez d’abord « Autoriser le préfixe/suffixe » dans Données si besoin. Caractères spéciaux : \\x0D = CR, \\x09 = Tab, \\x0A = LF.", "type": "Type", "prefix": "Préfixe", "suffix": "Suffixe", "text_hex": "Texte (\\xHH accepté)", "text_ph": "ex. INV- ou \\x09", "generate": "Générer", "hide_title": "Masquer des caractères", "zone": "Zone", "head": "Tête", "middle": "Milieu (début + longueur)", "tail": "Queue", "start_hex": "Début (milieu, hexa)", "len_hex": "Longueur (hexa)", "replace_title": "Remplacer des caractères", "replace_note": "Somme des longueurs ≤ 6. Ex. GS invisible → texte GS.", "find": "Chercher", "replace_with": "Remplacer par", "bt_title": "Nom Bluetooth", "bt_note": "Le manuel demande un QR généré. Commande la plus probable sur ce firmware : AT+NAME=… (même famille que AT+MODE / AT+HIDDLY). Après changement, oubliez l’ancien périphérique côté hôte.", "bt_name": "Nouveau nom", "bt_gen": "Générer le QR", "len_title": "Longueur de symbologie", "len_note": "Scannez d’abord le code « longueur imposée » de la symbologie, puis les 4 chiffres moteur (L1L2, 2 digits chacun). L1<L2 = plage, L1=L2 = longueur fixe.", "min": "Min", "max": "Max", "lang_title": "English"}, "en": {"search_ph": "Search a setting, symbology, or command…", "search_clear": "Clear search", "reception": "Keyboard input", "capture_on": "Capture on", "capture_help": "This field stays focused, even after clicking a button. Uncheck “Capture on” only to type in search or tools.", "capture_ph": "Ready — scan a barcode…", "select_all": "Select all", "copy": "Copy", "waiting": "Waiting", "history": "History", "clear": "Clear", "no_history": "No scans yet.", "subtitle": "Configurator · manual v1.0.0", "tab_title": "Netum C750 — Configurator", "tools": "Tools", "all_codes": "All codes", "search": "Search", "search_lede": "{n} group(s) for “{q}”", "all_lede": "{n} commands from manual v1.0.0. Click a row to show the barcode.", "col_page": "p.", "col_cat": "Category", "col_label": "Label", "col_cmd": "Command", "no_results": "No results. Try “All codes”.", "no_results_short": "No results.", "badge_def": "default", "badge_ret": "returns", "badge_dang": "caution", "badge_toggle": "toggle", "scan_tip": "Brighten the screen · frame the code · a beep confirms the setting", "chars": "ch.", "tools_lede": "Build a single setup barcode (official $DATA#…# format). For a Bluetooth name, an AT+NAME QR is provided.", "tools_affix": "Prefix / suffix in one code", "tools_affix_note": "Enable “Allow prefix/suffix” under Data first if needed. Special chars: \\x0D = CR, \\x09 = Tab, \\x0A = LF.", "type": "Type", "prefix": "Prefix", "suffix": "Suffix", "text_hex": "Text (\\xHH allowed)", "text_ph": "e.g. INV- or \\x09", "generate": "Generate", "hide_title": "Hide characters", "zone": "Zone", "head": "Leading", "middle": "Middle (start + length)", "tail": "Trailing", "start_hex": "Start (middle, hex)", "len_hex": "Length (hex)", "replace_title": "Replace characters", "replace_note": "Combined lengths ≤ 6. E.g. invisible GS → text GS.", "find": "Find", "replace_with": "Replace with", "bt_title": "Bluetooth name", "bt_note": "The manual asks for a generated QR. Most likely command on this firmware: AT+NAME=… (same family as AT+MODE / AT+HIDDLY). After changing it, forget the old device on the host.", "bt_name": "New name", "bt_gen": "Generate QR", "len_title": "Symbology length", "len_note": "Scan the symbology’s “fixed length” code first, then the 4 engine digits (L1L2, 2 digits each). L1<L2 = range, L1=L2 = exact length.", "min": "Min", "max": "Max", "lang_title": "Français"}};
+const CODE_FR = {"$SW#VER": "Version du firmware", "%BAT_VOL#": "Niveau de batterie", "%#IFSNO$": "Interface / mode actuel", "$RF#ST": "Délai de veille actuel", "%KB#SP?": "Vitesse clavier USB", "AT+HIDDLY": "Délai clavier Bluetooth", "$LAN#": "Disposition clavier actuelle", "$KB#OS": "Périphérique récepteur actuel", "%CHARSET#": "Jeu de caractères actuel", "%#IFSNO$B": "Restaurer les défauts personnalisés", "%#IFSNO$CS": "Enregistrer les défauts personnalisés", "%#IFSNO$CR": "Rétablir les défauts usine", "%#NORMD": "Mode normal", "%#INVMD": "Mode stockage", "%#TXMEM": "Envoyer les codes stockés", "%#+TCNT": "Nombre de codes stockés", "%#TXMEM#C": "Vider la mémoire après envoi", "%#+TCNT#": "Espace mémoire utilisé", "%#*NEW*": "Effacer les codes stockés", "%AutoSav#Off": "Désactivée", "%AutoSav#On": "Activée", "$POWER#OFF": "Veille immédiate", "$RF#ST02": "1 minute", "$RF#ST06": "3 minutes", "$RF#ST10": "5 minutes", "$RF#ST20": "10 minutes", "$RF#ST60": "30 minutes", "$RF#ST<0": "1 heure", "$RF#STH0": "2 heures", "$RF#ST00": "Jamais", "$BUZZ#0": "Muet", "$BUZZ#1": "Fort", "$BUZZ#2": "Moyen", "$BUZZ#3": "Faible", "$BUZZ#4": "Aiguë", "$BUZZ#5": "Grave", "%ACKBEEP#0": "Désactivée", "%ACKBEEP#1": "Activée", "%ACKBEEP#2": "Bip de connexion base (bascule)", "$MOTO#0": "Désactivé", "$MOTO#1": "Activé", "%#IFSNO$2": "Clavier HID", "%#IFSNO$3": "Port série virtuel (COM)", "%000604": "Activée", "%000605": "Désactivée", "%KB#SP1": "Très rapide (~1 ms)", "%KB#SP4": "Rapide (~4 ms)", "%KB#SP7": "Moyenne (~7 ms)", "%KB#SP9": "Lente (~9 ms)", "%#IFSNO$6": "Activé", "%#IFSNO$7": "Désactivé", "%#IFSNO$1": "Passer en 2.4G", "$RF#CH0%": "Démarrer l’appairage 2.4G", "$RF#CH02": "Appairage 1-vers-1", "$RF#CH0$": "Appairage 1-vers-1 (variante)", "$USB#KEYM": "Périphérique composite", "$USB#COM": "Port série virtuel", "$USB#KEY": "Clavier HID", "%KB#SP": "Lire la vitesse actuelle", "$USB#KEY4": "Moyenne", "$USB#KEY9": "Lente", "%KB#SPFF": "Cache SRAM (bascule)", "%KB#SPFC": "Cache hors-ligne (bascule)", "%#IFSNO$4": "Passer en Bluetooth", "AT+MODE=2": "HID clavier", "AT+MODE=1": "SPP (série)", "AT+MODE=3": "BLE (série)", "%BTDONGLE#": "Berceau Bluetooth", "%%ALL-CH": "Effacer l’appairage Bluetooth", "%%0S": "Afficher / masquer le clavier iOS", "%%0H3": "Maintien 4 s du déclencheur → clavier iOS", "%%0HH": "Double pression déclencheur → clavier iOS", "%%0AP": "Afficher le clavier iOS après envoi", "%%0HL": "Détection Caps Lock Windows", "%%0H8": "Maintien 8 s : bascule 2.4G / Bluetooth", "%%0AS": "Ne pas dormir tant que le Bluetooth est connecté", "AT+HIDDLY=2": "2 ms (très rapide)", "AT+HIDDLY=6": "6 ms", "AT+HIDDLY=10": "10 ms", "AT+HIDDLY=18": "18 ms", "AT+HIDDLY=25": "25 ms", "AT+HIDDLY=30": "30 ms (lent)", "$KEY#M0": "Désactivées", "$KEY#M1": "Config 1 — Ctrl+", "$KEY#M2": "Config 2 — Alt+ (Windows)", "$KEY#M3": "Config 3 — touche normale", "$KEY#M4": "Config 4 — Ctrl+", "$KEY#M5": "Config 5 — Alt+ (Windows)", "%LKLED#0": "Normale", "%LKLED#1": "Inverser", "%LKLED#2": "Tout en majuscules", "%LKLED#3": "Tout en minuscules", "%LKLED#4": "Verr. num désactivé", "%LKLED#5": "Verr. num activé", "%CHARSET#0": "Automatique", "%CHARSET#1": "GBK / BIG5 / Hangul / SJIS", "%CHARSET#3": "ISO/IEC 8859", "%CHARSET#2": "UTF-8 (Word)", "%CHARSET#21": "UTF-8 (Txt / Notepad)", "%CHARSET#4": "Mode normal (multi-langues)", "$KB#OS0": "Windows", "$KB#OS1": "iPhone / iPad / Mac", "$KB#OS2": "Android", "$LAN#EN": "Anglais (États-Unis)", "$LAN#FR": "Français (France)", "$LAN#GE": "Allemand", "$LAN#IT": "Italien", "$LAN#PT": "Portugais", "$LAN#ES": "Espagnol", "$LAN#TK": "Turc Q", "$LAN#TF": "Turc F", "$LAN#UK": "Anglais (Royaume-Uni)", "$LAN#CS": "Tchèque", "$LAN#CY": "Tchèque (standard)", "$LAN#HU": "Hongrois", "$LAN#FB": "Français (Belgique)", "$LAN#PB": "Portugais (Brésil)", "$LAN#FC": "Français canadien (traditionnel)", "$LAN#HR": "Croate", "$LAN#SK": "Slovaque QWERTY", "$LAN#SQ": "Slovaque", "$LAN#DA": "Danois", "$LAN#FI": "Finnois", "$LAN#EL": "Espagnol (Amérique latine)", "$LAN#NL": "Néerlandais", "$LAN#NO": "Norvégien", "$LAN#PL": "Polonais", "$LAN#SR": "Serbe latin", "$LAN#SL": "Slovène", "$LAN#SV": "Suédois", "$LAN#DS": "Allemand (Suisse)", "$LAN#JP": "Japonais", "$LAN#TH": "Thaï", "$LAN#AG": "ALT international (Windows)", "$LAN#RU": "ALT caractères spéciaux 8 bits", "$TERM#0": "Aucun", "$TERM#1": "CR (Entrée)", "$TERM#2": "Tabulation", "$TERM#3": "CR + LF", "$TERM#4": "LF", "$DATA#0": "Format par défaut", "$DATA#1": "Autoriser le suffixe", "$DATA#2": "Autoriser le préfixe", "$DATA#5": "Autoriser le masque en tête", "$DATA#4": "Autoriser le masque au milieu", "$DATA#3": "Autoriser le masque en queue", "$SCAN#2": "Ajouter un préfixe", "$SCAN#1": "Ajouter un suffixe", "$SCAN#4": "Effacer tous les préfixes", "$SCAN#3": "Effacer tous les suffixes", "$SCAN#5": "Masquer n caractères en tête", "$SCAN#6": "Masquer : position de début (milieu)", "$SCAN#7": "Masquer : longueur (milieu)", "$SCAN#8": "Masquer n caractères en queue", "$DATA#700A#": "Lire les remplacements", "$DATA#7000#": "Effacer les remplacements", "$DATA#7001\\x1D02GS#": "GS (0x1D) → texte GS", "$DATA#7001\n01\r#": "LF (0x0A) → CR (0x0D)", "$DATA#AI0": "Brut", "$DATA#AI1": "Ajouter des parenthèses", "$DATA#AI1\r#": "Parenthèses + séparation CR", "$DATA#AI1\t#": "Parenthèses + séparation Tab", "%SCMD#00#": "Gâchette (maintien)", "%SCMD#01#": "Continu", "%SCMD#02#": "Impulsion", "%SCMD#03#": "Déclenché par l’hôte", "%SCMD#04#": "Lot", "%SCMD#3000D": "3 secondes", "%SCMD#6000D": "6 secondes", "%SCMD#0500I": "0,5 s", "%SCMD#1000I": "1 s", "2050200": "Maintien (niveau)", "2050202": "Impulsion (simple pression)", "2050204": "Continu", "2050209": "Détection auto (luminosité)", "3030CF0": "Illimitée", "3030CF3": "3 s", "3030CF5": "5 s", "3030CFA": "10 s", "3030CFB": "15 s", "3030CFC": "20 s", "3030CFD": "30 s", "3030CFE": "60 s", "30500305FF": "Personnalisée (puis 3 chiffres, unité 100 ms)", "3050120063": "Personnalisé (puis 2 chiffres, unité 100 ms)", "3030C90": "Aucun", "3030C91": "1 s", "3030C93": "3 s", "3030C95": "5 s", "3030C97": "7 s", "3030C99": "Illimité (ne relit pas le même code)", "3F30000003": "Personnalisé (puis 2 chiffres, unité 100 ms)", "2051700": "Aucun", "2051702": "Code ID (lettre, ex. q = QR)", "2051701": "AIM ID (ex. ]C0)", "3030050": "Aucune", "3030051": "CR LF", "3030052": "CR", "3030053": "Tab", "3030054": "Entrée (CR)", "3030055": "CR LF (variante)", "6063C00": "Désactivées", "6063C01": "Activées", "3030910": "Désactivé", "3030911": "Activé", "3030110": "1D désactivé", "3030111": "1D activé", "3030500": "QR désactivé", "3030501": "QR activé", "3030900": "Tout désactiver", "3030901": "Tout activer", "2051501": "1 — 1 lecture", "2051502": "2 — 2 lectures", "2051503": "3 — 3 lectures", "2051504": "4 — 4 lectures", "3030EA0": "Blocage URL désactivé", "3030EA1": "Blocage URL activé", "3030080": "Fonction facture désactivée", "3030081": "Fonction facture activée", "3030AA0": "Facture spéciale", "3030AA1": "Facture ordinaire", "1000011": "Activer", "1000010": "Désactiver", "2030100": "Préambule : aucun", "2030101": "Préambule : caractère système", "2030102": "Préambule : pays + système", "1020021": "Transmettre la clé", "1020020": "Ne pas transmettre la clé", "3030401": "Add-on 2 digits : oui", "3030400": "Add-on 2 digits : non", "3030411": "Add-on 5 digits : oui", "3030410": "Add-on 5 digits : non", "3030421": "Add-on obligatoire", "3030420": "Add-on facultatif", "1000021": "Activer", "1000020": "Désactiver", "2030000": "Préambule : aucun", "2030001": "Préambule : caractère système", "2030002": "Préambule : pays + système", "1020031": "Transmettre la clé", "1020030": "Ne pas transmettre la clé", "1020001": "Convertir vers UPC-A", "1020000": "Ne pas convertir", "30303D1": "Add-on 2 digits : oui", "30303D0": "Add-on 2 digits : non", "30303E1": "Add-on 5 digits : oui", "30303E0": "Add-on 5 digits : non", "30303F1": "Add-on obligatoire", "30303F0": "Add-on facultatif", "3030150": "UPC-E1 désactivé", "3030151": "UPC-E1 activé", "1000041": "Activer", "1000040": "Désactiver", "1020011": "Extension zéros (vers EAN-13)", "1020010": "Sans extension", "3030371": "Add-on 2 digits : oui", "3030370": "Add-on 2 digits : non", "3030381": "Add-on 5 digits : oui", "3030380": "Add-on 5 digits : non", "3030391": "Add-on obligatoire", "3030390": "Add-on facultatif", "3030800": "Ne pas envoyer la clé", "3030801": "Envoyer la clé", "1000031": "Activer EAN-13", "1000030": "Désactiver EAN-13", "30303A1": "Add-on 2 digits : oui", "30303A0": "Add-on 2 digits : non", "30303B1": "Add-on 5 digits : oui", "30303B0": "Add-on 5 digits : non", "30303C1": "Add-on obligatoire", "30303C0": "Add-on facultatif", "3030160": "Ne pas envoyer la clé", "3030161": "Envoyer la clé", "1000231": "Activer Bookland EAN (ISBN)", "1000230": "Désactiver ISBN", "1000101": "Activer Code 128", "1000100": "Désactiver Code 128", "3030351": "Envoyer la clé Code 128", "3030350": "Ne pas envoyer la clé", "F3118485F50000005": "Code 128 : toute longueur", "F0118485F50000005": "Code 128 : longueur imposée (puis 4 chiffres)", "1040331": "Activer GS1-128", "1040330": "Désactiver GS1-128", "3030361": "Envoyer la clé GS1-128", "3030360": "Ne pas envoyer la clé GS1-128", "F3118687F50000007": "GS1-128 : toute longueur", "F0118687F50000007": "GS1-128 : longueur imposée (puis 4 chiffres)", "1000331": "Activer ISBT 128", "1000330": "Désactiver ISBT 128", "1000001": "Activer Code 39", "1000000": "Désactiver Code 39", "F3010001013700000": "Toute longueur", "F0010001013700000": "Longueur imposée (puis 4 chiffres)", "1020041": "Vérifier la clé (mod 43)", "1020040": "Ne pas vérifier", "1020241": "Transmettre la clé", "1020240": "Ne pas transmettre la clé", "1020111": "Full ASCII", "1020110": "Full ASCII off", "3030300": "Start/stop non transmis", "3030301": "Transmettre start/stop", "1020300": "Pas de conversion Code 32", "1020301": "Convertir en Code 32 (pharma IT)", "1020320": "Préfixe Code 32 « A » off", "1020321": "Préfixe Code 32 « A » on", "3030190": "Vérif. clé Code 32 off", "3030191": "Vérif. clé Code 32 on", "30301A0": "Clé Code 32 = 0x00", "30301A1": "Transmettre la clé Code 32", "1000111": "Activer", "1000110": "Désactiver", "F3010A0B023700011": "Toute longueur", "F0010A0B023700011": "Longueur imposée", "1000121": "Activer", "1000120": "Désactiver", "F3010C0D013700012": "Toute longueur", "F0010C0D013700012": "Longueur imposée", "2051200": "Contrôle activé", "2051201": "1 clé", "2051202": "2 clés", "1020141": "Transmettre la clé", "1020140": "Ne pas transmettre", "1000061": "Activer", "1000060": "Désactiver", "F3010809024400006": "Toute longueur", "F0010809024400006": "Longueur imposée", "2051E00": "Vérif. clé off", "2051E01": "Vérif. clé on", "1020211": "Transmettre la clé", "1020210": "Ne pas transmettre", "1000051": "Activer", "1000050": "Désactiver", "F3010607023700005": "Toute longueur", "F0010607023700005": "Longueur imposée", "3030481": "Vérif. on", "3030480": "Vérif. off", "3030491": "Transmettre la clé", "3030490": "Ne pas transmettre la clé", "3030201": "Activer", "3030200": "Désactiver", "3030211": "Vérif. on", "3030210": "Vérif. off", "3030221": "Transmettre la clé", "3030220": "Ne pas transmettre", "F3118081F50000001": "Toute longueur", "F0118081F50000001": "Longueur imposée", "3030230": "Désactiver", "3030231": "Activer", "3030240": "Vérif. off", "3030241": "Vérif. on", "3030250": "Ne pas transmettre la clé", "3030251": "Transmettre la clé", "F3118283F50000003": "Toute longueur", "F0118283F50000003": "Longueur imposée", "1000071": "Activer", "1000070": "Désactiver", "F3010203023700007": "Toute longueur", "F0010203023700007": "Longueur imposée", "30304C1": "Vérif. on", "30304C0": "Vérif. off", "30304D1": "Transmettre la clé", "30304D0": "Ne pas transmettre", "1020061": "Édition NOTIS on", "1020060": "Édition NOTIS off", "3030310": "Start/stop ABCD/ABCD", "3030311": "Start/stop ABCD/TN*E", "3030320": "Start/stop majuscules", "3030321": "Start/stop minuscules", "1000141": "Activer", "1000140": "Désactiver", "F3010F10013700014": "Toute longueur", "F0010F10013700014": "Longueur imposée", "1020120": "1 clé", "1020121": "2 clés", "1020131": "Transmettre la clé", "1020130": "Ne pas transmettre", "1020230": "Algo MOD10/MOD11", "1020231": "Algo MOD10/MOD10", "1000351": "Activer", "1000350": "Désactiver", "3030261": "Caractères AI on", "3030260": "Caractères AI off", "1000171": "Activer", "1000170": "Désactiver", "3030610": "Lecture normale seulement", "3030611": "Inversé seulement", "3030612": "Normal + inversé", "1003251": "Activer", "1003250": "Désactiver", "3030660": "ECI non transmis", "3030661": "ECI transmis", "3030670": "Lecture normale seulement", "3030671": "Inversé seulement", "3030672": "Normal + inversé", "6063A00": "Conserver BOM UTF-8", "6063A01": "Retirer BOM UTF-8", "1003241": "Activer", "1003240": "Désactiver", "30306B0": "Lecture normale seulement", "30306B1": "Inversé seulement", "30306B2": "Normal + inversé", "30306C0": "ECI non transmis", "30306C1": "ECI transmis", "1003260": "Désactiver", "1003261": "Activer", "1003280": "Désactiver", "1003281": "Activer", "10032F0": "Désactiver", "10032F1": "Activer", "3030710": "Lecture normale seulement", "3030711": "Inversé seulement", "3030712": "Normal + inversé", "3030330": "Désactiver (convertir en EAN-13)", "3030331": "Activer", "3030451": "Activer", "3030450": "Désactiver", "3030461": "Vérif. on", "3030460": "Vérif. off", "3030471": "Transmettre la clé", "3030470": "Ne pas transmettre", "F3118889F50000009": "Toute longueur", "F0118889F50000009": "Longueur imposée", "3030170": "Désactiver", "3030171": "Activer", "$NO#0": "0", "$NO#1": "1", "$NO#2": "2", "$NO#3": "3", "$NO#4": "4", "$NO#5": "5", "$NO#6": "6", "$NO#7": "7", "$NO#8": "8", "$NO#9": "9", "$NO#A": "A", "$NO#B": "B", "$NO#C": "C", "$NO#D": "D", "$NO#E": "E", "$NO#F": "F", "A0": "0", "A1": "1", "A2": "2", "A3": "3", "A4": "4", "A5": "5", "A6": "6", "A7": "7", "A8": "8", "A9": "9", "A-": "Annuler la saisie"};
+const TX = {"Démarrage": "Get started", "Les actions les plus utiles pour prendre en main le C750.": "The most useful actions to get started with the C750.", "Lire l’état du scanner": "Read scanner status", "Scannez un code, le scanner tape la réponse dans le panneau Réception.": "Scan a code; the scanner types the reply into the input panel.", "Version du firmware": "Firmware version", "Niveau de batterie": "Battery level", "≥ 4,2 V plein · ≤ 3,7 V faible (2 bips) · ≤ 3,5 V critique (5 bips).": "≥ 4.2 V full · ≤ 3.7 V low (2 beeps) · ≤ 3.5 V critical (5 beeps).", "Interface / mode actuel": "Current interface / mode", "Délai de veille actuel": "Current sleep timeout", "Vitesse clavier USB": "USB keyboard speed", "Exemple : KB SP=2,4 → USB 2 ms, récepteur 4 ms.": "Example: KB SP=2,4 → USB 2 ms, receiver 4 ms.", "Délai clavier Bluetooth": "Bluetooth keyboard delay", "Disposition clavier actuelle": "Current keyboard layout", "Périphérique récepteur actuel": "Current host device", "Jeu de caractères actuel": "Current character set", "Réinitialisation": "Reset", "Restaurer ou enregistrer les défauts du scanner.": "Restore or save scanner defaults.", "Restaurer les défauts personnalisés": "Restore custom defaults", "Enregistrer les défauts personnalisés": "Save custom defaults", "Rétablir les défauts usine": "Restore factory defaults", "Efface aussi les défauts personnalisés.": "Also clears custom defaults.", "Système": "System", "Mode de travail et mémoire interne.": "Working mode and internal memory.", "Mode de travail": "Working mode", "En mode stockage, les codes sont mémorisés. Un second scan de « Envoyer la mémoire » annule l’envoi en cours.": "In storage mode, codes are saved. Scanning “Upload memory” again cancels the current upload.", "Mode normal": "Normal mode", "Mode stockage": "Storage mode", "Mémoire": "Memory", "Envoyer les codes stockés": "Upload stored barcodes", "Nombre de codes stockés": "Stored barcode count", "Vider la mémoire après envoi": "Clear memory after upload", "Espace mémoire utilisé": "Memory space used", "Effacer les codes stockés": "Clear stored barcodes", "Sauvegarde auto (sans fil)": "Auto-save (wireless)", "Si un envoi 2.4G / Bluetooth échoue, le code est conservé. Récupération via « Envoyer les codes stockés ».": "If a 2.4G / Bluetooth send fails, the code is kept. Recover it with “Upload stored barcodes”.", "Désactivée": "Off", "Activée": "On", "Alimentation": "Power", "Veille et extinction.": "Sleep and shutdown.", "Délai de veille": "Sleep timeout", "Veille immédiate": "Sleep now", "1 minute": "1 minute", "3 minutes": "3 minutes", "5 minutes": "5 minutes", "10 minutes": "10 minutes", "30 minutes": "30 minutes", "1 heure": "1 hour", "2 heures": "2 hours", "Jamais": "Never", "Indicateurs": "Indicators", "Bip, tonalité et vibreur.": "Beep, pitch, and vibration.", "Volume du bip": "Beep volume", "Muet": "Mute", "Fort": "High", "Moyen": "Medium", "Faible": "Low", "Tonalité": "Pitch", "Aiguë": "High pitch", "Grave": "Low pitch", "Réponse vocale SDK": "SDK voice response", "Bip de connexion base (bascule)": "Cradle connection beep (toggle)", "Moteur vibreur": "Vibration motor", "Fonctionne avec le bip. Tous les modèles ne le supportent pas.": "Works with the beep. Not all models support this.", "Désactivé": "Disabled", "Activé": "Enabled", "USB filaire": "USB wired", "Câble USB vers l’ordinateur.": "USB cable to the computer.", "Mode USB": "USB mode", "Clavier HID": "HID keyboard", "Port série virtuel (COM)": "Virtual serial port (COM)", "Sélection auto filaire / sans fil": "Auto wired / wireless select", "USB prioritaire si le câble est branché, sinon 2.4G.": "USB has priority when the cable is plugged in, otherwise 2.4G.", "Très rapide (~1 ms)": "Very fast (~1 ms)", "Rapide (~4 ms)": "Fast (~4 ms)", "Moyenne (~7 ms)": "Medium (~7 ms)", "Lente (~9 ms)": "Slow (~9 ms)", "Affecte aussi l’envoi RF/BT des très longs codes et l’upload mémoire.": "Also affects RF/BT of very long barcodes and memory upload.", "Envoi multi-touches HID (Windows)": "HID multi-key send (Windows)", "Sans fil 2.4G": "2.4G wireless", "Dongle USB fourni.": "Included USB dongle.", "Transmission 2.4G": "2.4G transmission", "Passer en 2.4G": "Switch to 2.4G", "Appairage": "Pairing", "Démarrer l’appairage 2.4G": "Start 2.4G pairing", "Valide uniquement en mode 2.4G. Bip continu jusqu’au dongle.": "Only valid in 2.4G mode. Continuous beep until the dongle is found.", "Appairage 1-vers-1": "One-to-one pairing", "Appairage 1-vers-1 (variante)": "One-to-one pairing (variant)", "Mode du récepteur": "Receiver mode", "Composite : firmware récepteur FWVerL ou plus récent.": "Composite: receiver firmware FWVerL or later.", "Périphérique composite": "Composite device", "Port série virtuel": "Virtual serial port", "Pilote COM requis.": "COM driver required.", "Vitesse clavier du récepteur": "Receiver keyboard speed", "Scanner et récepteur doivent être à la même vitesse, sinon les longs codes se corrompent. La vitesse haute correspond souvent au mode clavier du récepteur.": "Scanner and receiver must use the same speed, or long barcodes may be corrupted. High speed often matches receiver keyboard mode.", "Lire la vitesse actuelle": "Read current speed", "Moyenne": "Medium", "Lente": "Slow", "Cache 2.4G (bascule)": "2.4G cache (toggle)", "Utile si vous scannez vite de gros codes, ou si le scanner sort brièvement de portée.": "Useful when scanning large codes quickly, or if the scanner briefly leaves range.", "Cache SRAM (bascule)": "SRAM cache (toggle)", "2 bips = off · 3 tons = on.": "2 beeps = off · 3 tones = on.", "Cache hors-ligne (bascule)": "Offline cache (toggle)", "LED bleue allumée / clignotante = mode Bluetooth.": "Solid / blinking blue LED = Bluetooth mode.", "Transmission Bluetooth": "Bluetooth transmission", "Passer en Bluetooth": "Switch to Bluetooth", "Profil Bluetooth": "Bluetooth profile", "Effacez l’appairage côté hôte avant de changer de profil.": "Clear pairing on the host before changing profile.", "HID clavier": "HID keyboard", "Visible dans les réglages Bluetooth du système, sans logiciel.": "Shows up in system Bluetooth settings, no software needed.", "SPP (série)": "SPP (serial)", "Pour une appli qui ouvre un port COM Bluetooth.": "For an app that opens a Bluetooth COM port.", "BLE (série)": "BLE (serial)", "Berceau Bluetooth": "Bluetooth cradle", "Effacer l’appairage Bluetooth": "Clear Bluetooth pairing", "Clavier iOS / Windows": "iOS / Windows keyboard", "Afficher / masquer le clavier iOS": "Show / hide iOS keyboard", "Maintien 4 s du déclencheur → clavier iOS": "Hold trigger 4 s → iOS keyboard", "Double pression déclencheur → clavier iOS": "Double-press trigger → iOS keyboard", "Afficher le clavier iOS après envoi": "Show iOS keyboard after send", "Détection Caps Lock Windows": "Windows Caps Lock detection", "Maintien 8 s : bascule 2.4G / Bluetooth": "Hold 8 s: toggle 2.4G / Bluetooth", "Plus de 16 s = extinction, sans changement de mode.": "Over 16 s = power off, no mode change.", "Ne pas dormir tant que le Bluetooth est connecté": "Do not sleep while Bluetooth is connected", "Vitesse clavier Bluetooth HID": "Bluetooth HID keyboard speed", "2 ms (très rapide)": "2 ms (very fast)", "6 ms": "6 ms", "10 ms": "10 ms", "18 ms": "18 ms", "25 ms": "25 ms", "30 ms (lent)": "30 ms (slow)", "Clavier": "Keyboard", "S’applique à USB HID, 2.4G clavier et Bluetooth HID.": "Applies to USB HID, 2.4G keyboard, and Bluetooth HID.", "Combinaisons Ctrl / Alt (ASCII < 0x20)": "Ctrl / Alt combinations (ASCII < 0x20)", "Désactivées": "Off", "Config 1 — Ctrl+": "Config 1 — Ctrl+", "Config 2 — Alt+ (Windows)": "Config 2 — Alt+ (Windows)", "Config 3 — touche normale": "Config 3 — normal key", "Config 4 — Ctrl+": "Config 4 — Ctrl+", "Config 5 — Alt+ (Windows)": "Config 5 — Alt+ (Windows)", "Casse": "Case", "Sans effet avec les dispositions ALT et thaïe.": "Has no effect with ALT and Thai layouts.", "Normale": "Normal", "Inverser": "Swap case", "Tout en majuscules": "All caps", "Tout en minuscules": "All lowercase", "Verr. num": "Num Lock", "Sur téléphone, laissez le verr. num désactivé, sinon les chiffres peuvent manquer.": "On phones, keep Num Lock off or digits may be missing.", "Verr. num désactivé": "Num Lock off", "Verr. num activé": "Num Lock on", "Jeu de caractères (moteur 2D)": "Character set (2D engine)", "Automatique": "Automatic", "Caractères européens ≥ C0h (FR, DE, TR, PT, ES…).": "European characters ≥ C0h (FR, DE, TR, PT, ES…).", "Mode normal (multi-langues)": "Normal mode (multi-language)", "Appareil récepteur": "Host device", "À combiner avec la langue du clavier. Sur Android, Google Gboard est recommandé.": "Use together with keyboard language. On Android, Google Gboard is recommended.", "Langue clavier": "Keyboard language", "Doit correspondre à la disposition du système, sinon @ # / chiffres se mélangent.": "Must match the OS layout, or @ # / digits will be wrong.", "Disposition": "Layout", "Anglais (États-Unis)": "English (US)", "Français (France)": "French (France)", "Allemand": "German", "Italien": "Italian", "Portugais": "Portuguese", "Espagnol": "Spanish", "Turc Q": "Turkish Q", "Turc F": "Turkish F", "Anglais (Royaume-Uni)": "English (UK)", "Tchèque": "Czech", "Tchèque (standard)": "Czech (standard)", "Hongrois": "Hungarian", "Français (Belgique)": "Belgian French", "Portugais (Brésil)": "Brazilian Portuguese", "Français canadien (traditionnel)": "Canadian French (traditional)", "Croate": "Croatian", "Slovaque QWERTY": "Slovak QWERTY", "Slovaque": "Slovak", "Danois": "Danish", "Finnois": "Finnish", "Espagnol (Amérique latine)": "Latin American Spanish", "Néerlandais": "Dutch", "Norvégien": "Norwegian", "Polonais": "Polish", "Serbe latin": "Serbian Latin", "Slovène": "Slovenian", "Suédois": "Swedish", "Allemand (Suisse)": "Swiss German", "Japonais": "Japanese", "Thaï": "Thai", "Le moteur doit aussi être en sortie TH.": "The engine must also be set to TH output.", "ALT international (Windows)": "ALT international (Windows)", "Indépendant de la disposition hôte, mais plus lent.": "Independent of the host layout, but slower.", "ALT caractères spéciaux 8 bits": "ALT single-byte special characters", "Données": "Data", "Terminaison, préfixe / suffixe, masquage. L’onglet Outils génère un code unique.": "Terminator, prefix / suffix, hiding. The Tools tab builds a single code.", "Caractère de fin (MCU)": "Terminator (MCU)", "Indépendant du suffixe moteur. Idéal si le moteur n’ajoute rien. CR = Entrée, pratique dans un champ.": "Independent of the engine suffix. Ideal if the engine adds nothing. CR = Enter, handy in a field.", "Aucun": "None", "CR (Entrée)": "CR (Enter)", "Tabulation": "Tab", "Format de sortie (préfixe / suffixe / masque)": "Output format (prefix / suffix / hide)", "Format par défaut": "Default format", "Autoriser le suffixe": "Allow suffix", "Autoriser le préfixe": "Allow prefix", "Autoriser le masque en tête": "Allow hiding leading data", "Autoriser le masque au milieu": "Allow hiding middle data", "Autoriser le masque en queue": "Allow hiding trailing data", "Opérations d’édition (puis codes 0–F)": "Edit operations (then 0–F codes)", "Après l’opération, scannez deux codes hexa (ex. 0 puis D = CR). Préférez le générateur « un code » dans Outils.": "After the operation, scan two hex codes (e.g. 0 then D = CR). Prefer the one-code generator in Tools.", "Ajouter un préfixe": "Add prefix", "Ajouter un suffixe": "Add suffix", "Effacer tous les préfixes": "Clear all prefixes", "Effacer tous les suffixes": "Clear all suffixes", "Masquer n caractères en tête": "Hide n leading characters", "Masquer : position de début (milieu)": "Hide: middle start position", "Masquer : longueur (milieu)": "Hide: middle length", "Masquer n caractères en queue": "Hide n trailing characters", "Remplacement de caractères": "Character replacement", "Lire les remplacements": "Read replacements", "Effacer les remplacements": "Clear replacements", "GS (0x1D) → texte GS": "GS (0x1D) → text GS", "LF (0x0A) → CR (0x0D)": "LF (0x0A) → CR (0x0D)", "Parenthèses champs AI GS1": "GS1 AI field parentheses", "Certains champs AI seulement, firmware spécifique.": "Only some AI fields; special firmware required.", "Brut": "Raw", "Ajouter des parenthèses": "Add parentheses", "Parenthèses + séparation CR": "Parentheses + CR separator", "Parenthèses + séparation Tab": "Parentheses + Tab separator", "Lecture": "Scanning", "Déclenchement, timeouts, anti-doublon.": "Trigger, timeouts, duplicate delay.", "Mode de décodage (MCU)": "Decode mode (MCU)", "Gâchette (maintien)": "Trigger (level)", "Continu": "Continuous", "Une pression démarre / arrête.": "One press starts / stops.", "Impulsion": "Pulse", "Déclenché par l’hôte": "Host trigger", "Modèles custom.": "Custom models only.", "Lot": "Batch", "Timeout de décodage (MCU)": "Decode timeout (MCU)", "3 secondes": "3 seconds", "6 secondes": "6 seconds", "Intervalle en continu (MCU)": "Continuous interval (MCU)", "0,5 s": "0.5 s", "1 s": "1 s", "Mode déclencheur (moteur)": "Trigger mode (engine)", "Maintien (niveau)": "Hold (level)", "Impulsion (simple pression)": "Pulse (single press)", "Détection auto (luminosité)": "Auto-sense (brightness)", "Durée d’un scan (moteur)": "Single scan time (engine)", "Illimitée": "Unlimited", "Personnalisée (puis 3 chiffres, unité 100 ms)": "Custom (then 3 digits, unit 100 ms)", "500 ms → 0, 0, 5. 10,5 s → 1, 0, 5. Plage 500–25500 ms.": "500 ms → 0, 0, 5. 10.5 s → 1, 0, 5. Range 500–25500 ms.", "Intervalle continu (moteur)": "Continuous interval (engine)", "Personnalisé (puis 2 chiffres, unité 100 ms)": "Custom (then 2 digits, unit 100 ms)", "500 ms → 0 puis 5. Défaut 500 ms, max 9,9 s.": "500 ms → 0 then 5. Default 500 ms, max 9.9 s.", "Délai anti-doublon (même code)": "Same-code delay", "Illimité (ne relit pas le même code)": "Unlimited (do not reread the same code)", "Identifiant de symbologie": "Symbology ID", "Code ID (lettre, ex. q = QR)": "Code ID (letter, e.g. q = QR)", "AIM ID (ex. ]C0)": "AIM ID (e.g. ]C0)", "Terminaison moteur": "Engine terminator", "Distinct de la terminaison MCU ($TERM#). Évitez d’en activer deux, sinon double Entrée.": "Separate from the MCU terminator ($TERM#). Avoid enabling both or you will get a double Enter.", "Aucune": "None", "Entrée (CR)": "Enter (CR)", "CR LF (variante)": "CR LF (variant)", "Règles GS1 (moteur)": "GS1 rules (engine)", "Activées": "On", "Codes 1D inversés": "Inverted 1D codes", "Interrupteurs globaux": "Global switches", "1D désactivé": "1D off", "1D activé": "1D on", "QR désactivé": "QR off", "QR activé": "QR on", "Tout désactiver": "Disable all", "Tout activer": "Enable all", "Niveau de sécurité 1D": "1D security level", "Plus le niveau est haut, plus le moteur est prudent (codes abîmés) et moins agressif.": "Higher levels are more cautious (damaged codes) and less aggressive.", "1 — 1 lecture": "1 — 1 read", "2 — 2 lectures": "2 — 2 reads", "3 — 3 lectures": "3 — 3 reads", "4 — 4 lectures": "4 — 4 reads", "Fonctions appareil": "Device functions", "Blocage URL désactivé": "URL blocking off", "Blocage URL activé": "URL blocking on", "Factures (TVA)": "Invoices (VAT)", "Fonction facture désactivée": "Invoice function off", "Fonction facture activée": "Invoice function on", "Désactive Code 128 automatiquement.": "Automatically disables Code 128.", "Facture spéciale": "Special invoice", "Facture ordinaire": "Ordinary invoice", "Symbologies": "Symbologies", "Activez seulement ce dont vous avez besoin : moins de collisions, lecture plus nette.": "Enable only what you need: fewer collisions, cleaner reads.", "Activer": "Enable", "Désactiver": "Disable", "Préambule : aucun": "Preamble: none", "Préambule : caractère système": "Preamble: system character", "Préambule : pays + système": "Preamble: country + system", "Transmettre la clé": "Transmit check digit", "Ne pas transmettre la clé": "Do not transmit check digit", "Add-on 2 digits : oui": "2-digit add-on: on", "Add-on 2 digits : non": "2-digit add-on: off", "Add-on 5 digits : oui": "5-digit add-on: on", "Add-on 5 digits : non": "5-digit add-on: off", "Add-on obligatoire": "Add-on required", "Add-on facultatif": "Add-on optional", "Convertir vers UPC-A": "Convert to UPC-A", "Ne pas convertir": "Do not convert", "UPC-E1 désactivé": "UPC-E1 off", "UPC-E1 activé": "UPC-E1 on", "Extension zéros (vers EAN-13)": "Zero extend (to EAN-13)", "Sans extension": "No extension", "Ne pas envoyer la clé": "Do not send check digit", "Envoyer la clé": "Send check digit", "Activer EAN-13": "Enable EAN-13", "Désactiver EAN-13": "Disable EAN-13", "Activer Bookland EAN (ISBN)": "Enable Bookland EAN (ISBN)", "Désactiver ISBN": "Disable ISBN", "Activer Code 128": "Enable Code 128", "Désactiver Code 128": "Disable Code 128", "Envoyer la clé Code 128": "Send Code 128 check digit", "Code 128 : toute longueur": "Code 128: any length", "Code 128 : longueur imposée (puis 4 chiffres)": "Code 128: fixed length (then 4 digits)", "Activer GS1-128": "Enable GS1-128", "Désactiver GS1-128": "Disable GS1-128", "Envoyer la clé GS1-128": "Send GS1-128 check digit", "Ne pas envoyer la clé GS1-128": "Do not send GS1-128 check digit", "GS1-128 : toute longueur": "GS1-128: any length", "GS1-128 : longueur imposée (puis 4 chiffres)": "GS1-128: fixed length (then 4 digits)", "Activer ISBT 128": "Enable ISBT 128", "Désactiver ISBT 128": "Disable ISBT 128", "Activer Code 39": "Enable Code 39", "Désactiver Code 39": "Disable Code 39", "Toute longueur": "Any length", "Longueur imposée (puis 4 chiffres)": "Fixed length (then 4 digits)", "Longueur imposée": "Fixed length", "Vérifier la clé (mod 43)": "Verify check digit (mod 43)", "Ne pas vérifier": "Do not verify", "Start/stop non transmis": "Do not transmit start/stop", "Transmettre start/stop": "Transmit start/stop", "Pas de conversion Code 32": "No Code 32 conversion", "Convertir en Code 32 (pharma IT)": "Convert to Code 32 (Italian pharma)", "Préfixe Code 32 « A » off": "Code 32 prefix “A” off", "Préfixe Code 32 « A » on": "Code 32 prefix “A” on", "Vérif. clé Code 32 off": "Code 32 check off", "Vérif. clé Code 32 on": "Code 32 check on", "Clé Code 32 = 0x00": "Code 32 check digit = 0x00", "Transmettre la clé Code 32": "Transmit Code 32 check digit", "Contrôle activé": "Check enabled", "1 clé": "1 check digit", "2 clés": "2 check digits", "Ne pas transmettre": "Do not transmit", "Vérif. clé off": "Check off", "Vérif. clé on": "Check on", "Vérif. on": "Check on", "Vérif. off": "Check off", "Édition NOTIS on": "NOTIS editing on", "Édition NOTIS off": "NOTIS editing off", "Start/stop majuscules": "Start/stop uppercase", "Start/stop minuscules": "Start/stop lowercase", "Algo MOD10/MOD11": "MOD10 / MOD11 algorithm", "Algo MOD10/MOD10": "MOD10 / MOD10 algorithm", "Caractères AI on": "AI characters on", "Caractères AI off": "AI characters off", "Lecture normale seulement": "Normal only", "Inversé seulement": "Inverted only", "Normal + inversé": "Normal + inverted", "ECI non transmis": "ECI not transmitted", "ECI transmis": "ECI transmitted", "Conserver BOM UTF-8": "Keep UTF-8 BOM", "Retirer BOM UTF-8": "Strip UTF-8 BOM", "Désactiver (convertir en EAN-13)": "Disable (convert to EAN-13)", "Codes numériques": "Numeric codes", "À scanner après une commande qui attend une valeur (préfixe, longueurs, timeouts).": "Scan after a command that expects a value (prefix, lengths, timeouts).", "Hexa MCU (préfixe / suffixe / masque)": "MCU hex (prefix / suffix / hide)", "Deux digits par caractère ASCII. CR = 0 D · Tab = 0 9 · LF = 0 A.": "Two digits per ASCII character. CR = 0 D · Tab = 0 9 · LF = 0 A.", "Chiffres moteur (longueurs, timeouts)": "Engine digits (lengths, timeouts)", "Annuler la saisie": "Cancel entry", "Manuel": "Manual", "USB": "USB", "2.4G": "2.4G", "Langue": "Language", "Moteur": "Engine", "Numérique": "Numeric", "Annexe": "Appendix", "Autre": "Other"};
+let state = {
+  cat: "start",
+  selected: {},
+  query: "",
+  history: JSON.parse(localStorage.getItem("c750-history") || "[]"),
+  armed: true,
+  lang: localStorage.getItem("c750-lang") === "fr" ? "fr" : "en",
+};
+
+function t(key, vars) {
+  const dict = I18N[state.lang] || I18N.fr;
+  let s = dict[key] || I18N.fr[key] || key;
+  if (vars) for (const [k, v] of Object.entries(vars)) s = s.replaceAll("{" + k + "}", v);
+  return s;
+}
+function tr(s) {
+  if (!s || state.lang === "fr") return s;
+  return TX[s] || s;
+}
+function updateChrome() {
+  document.documentElement.lang = state.lang;
+  const q = document.getElementById("q");
+  q.placeholder = t("search_ph");
+  const clr = document.getElementById("q-clear");
+  clr.title = t("search_clear");
+  clr.setAttribute("aria-label", t("search_clear"));
+  document.getElementById("lang-btn").textContent = state.lang === "fr" ? "EN" : "FR";
+  document.getElementById("lang-btn").title = t("lang_title");
+  document.getElementById("reception-title").textContent = t("reception");
+  document.getElementById("arm-label").lastChild.textContent = " " + t("capture_on");
+  document.getElementById("capture-help").textContent = t("capture_help");
+  document.getElementById("capture").placeholder = t("capture_ph");
+  document.getElementById("select-result").textContent = t("select_all");
+  document.getElementById("copy-result").textContent = t("copy");
+  const vis = document.getElementById("result-vis");
+  if (!vis.textContent || vis.textContent === I18N.fr.waiting || vis.textContent === I18N.en.waiting) vis.textContent = t("waiting");
+  document.getElementById("history-title").textContent = t("history");
+  document.getElementById("clear-hist").textContent = t("clear");
+  document.getElementById("subtitle").textContent = t("subtitle");
+  document.title = t("tab_title");
+}
+
+
+function saveHist() {
+  localStorage.setItem("c750-history", JSON.stringify(state.history.slice(0, 50)));
+}
+
+function renderNav() {
+  const el = document.getElementById("nav");
+  el.innerHTML = CATALOG.map(c => `<button class="nav-btn ${state.cat===c.id?"active":""}" data-cat="${c.id}">${escapeHtml(tr(c.title))}</button>`).join("")
+    + `<button class="nav-btn ${state.cat==="tools"?"active":""}" data-cat="tools">${escapeHtml(t("tools"))}</button>`
+    + `<button class="nav-btn ${state.cat==="all"?"active":""}" data-cat="all">${escapeHtml(t("all_codes"))}</button>`;
+  el.querySelectorAll("button").forEach(b => b.onclick = () => { state.cat = b.dataset.cat; render(); });
+}
+
+function renderBarcode(code, qr) {
+  const useQr = qr || code.length > 40 || /[\r\n\t]/.test(code);
+  try {
+    if (useQr) return svgQR(code, 200);
+    return svg128(code);
+  } catch (e) {
+    try { return svgQR(code, 200); } catch { return `<div class="empty">${escapeHtml(e.message)}</div>`; }
+  }
+}
+
+function selectItem(gid, item) {
+  state.selected[gid] = item.code;
+  render();
+}
+
+function itemButton(g, it) {
+  const active = state.selected[g.id] === it.code;
+  const badges = [
+    it.default ? `<span class="badge def">${t("badge_def")}</span>` : "",
+    it.returns ? `<span class="badge ret">${t("badge_ret")}</span>` : "",
+    it.danger ? `<span class="badge dang">${t("badge_dang")}</span>` : "",
+    it.toggle ? `<span class="badge">${t("badge_toggle")}</span>` : "",
+    it.qr ? `<span class="badge">QR</span>` : "",
+  ].join("");
+  return `<button class="opt ${active?"active":""}" data-gid="${g.id}" data-code="${encodeURIComponent(it.code)}">
+    <span>${escapeHtml(tr(it.label))}${it.note && g.kind==="actions" ? `<div class="note" style="margin:4px 0 0">${escapeHtml(tr(it.note))}</div>`:""}</span>
+    <span class="meta">${badges}</span>
+  </button>`;
+}
+
+function groupCard(g) {
+  if (!state.selected[g.id]) {
+    const def = g.items.find(i => i.default) || g.items[0];
+    if (def) state.selected[g.id] = def.code;
+  }
+  const current = g.items.find(i => i.code === state.selected[g.id]) || g.items[0];
+  return `<section class="card" id="g-${g.id}">
+    <h3>${escapeHtml(tr(g.title))}</h3>
+    ${g.note ? `<p class="note">${escapeHtml(tr(g.note))}</p>` : ""}
+    <div class="barcode-stage" id="stage-${g.id}" data-code="${encodeURIComponent(current.code)}" data-qr="${current.qr?1:0}">
+      ${renderBarcode(current.code, current.qr)}
+      <div class="human">${escapeHtml(visibleCode(current.code))}</div>
+      <div class="scan-tip">${escapeHtml(t("scan_tip"))}</div>
+    </div>
+    <div class="options">${g.items.map(it => itemButton(g, it)).join("")}</div>
+  </section>`;
+}
+
+function matchesQuery(it, extra="") {
+  if (!state.query) return true;
+  const q = state.query.toLowerCase();
+  return (it.label+" "+tr(it.label)+" "+it.code+" "+(it.note||"")+" "+tr(it.note||"")+" "+extra+" "+tr(extra)).toLowerCase().includes(q);
+}
+function filterCat(cat) {
+  const groups = cat.groups.map(g => ({
+    ...g,
+    items: g.items.filter(it => matchesQuery(it, cat.title+" "+g.title))
+  })).filter(g => g.items.length);
+  return { ...cat, groups };
+}
+
+function renderTools() {
+  return `<h1 class="page-title">${escapeHtml(t("tools"))}</h1>
+  <p class="lede">${escapeHtml(t("tools_lede"))}</p>
+  <section class="card">
+    <h3>${escapeHtml(t("tools_affix"))}</h3>
+    <p class="note">${escapeHtml(t("tools_affix_note"))}</p>
+    <div class="tools">
+      <div class="row">
+        <div class="field"><label>${escapeHtml(t("type"))}</label>
+          <select id="edit-kind"><option value="2">${escapeHtml(t("prefix"))}</option><option value="1">${escapeHtml(t("suffix"))}</option></select>
+        </div>
+      </div>
+      <div class="field"><label>${escapeHtml(t("text_hex"))}</label><input id="edit-text" placeholder="${escapeHtml(t("text_ph"))}"></div>
+      <button class="btn btn-primary" id="btn-edit">${escapeHtml(t("generate"))}</button>
+      <div id="edit-out"></div>
+    </div>
+  </section>
+  <section class="card">
+    <h3>${escapeHtml(t("hide_title"))}</h3>
+    <div class="tools">
+      <div class="row">
+        <div class="field"><label>${escapeHtml(t("zone"))}</label>
+          <select id="hide-kind">
+            <option value="5">${escapeHtml(t("head"))}</option>
+            <option value="4">${escapeHtml(t("middle"))}</option>
+            <option value="3">${escapeHtml(t("tail"))}</option>
+          </select>
+        </div>
+        <div class="field"><label>${escapeHtml(t("start_hex"))}</label><input id="hide-start" value="00" maxlength="2"></div>
+        <div class="field"><label>${escapeHtml(t("len_hex"))}</label><input id="hide-len" value="04" maxlength="2"></div>
+      </div>
+      <button class="btn btn-primary" id="btn-hide">${escapeHtml(t("generate"))}</button>
+      <div id="hide-out"></div>
+    </div>
+  </section>
+  <section class="card">
+    <h3>${escapeHtml(t("replace_title"))}</h3>
+    <p class="note">${escapeHtml(t("replace_note"))}</p>
+    <div class="tools">
+      <div class="field"><label>${escapeHtml(t("find"))}</label><input id="rep-from" placeholder="\\x1D ou NT"></div>
+      <div class="field"><label>${escapeHtml(t("replace_with"))}</label><input id="rep-to" placeholder="GS"></div>
+      <button class="btn btn-primary" id="btn-rep">${escapeHtml(t("generate"))}</button>
+      <div id="rep-out"></div>
+    </div>
+  </section>
+  <section class="card">
+    <h3>${escapeHtml(t("bt_title"))}</h3>
+    <p class="note">${escapeHtml(t("bt_note"))}</p>
+    <div class="tools">
+      <div class="field"><label>${escapeHtml(t("bt_name"))}</label><input id="bt-name" placeholder="C750-Atelier"></div>
+      <button class="btn btn-primary" id="btn-bt">${escapeHtml(t("bt_gen"))}</button>
+      <div id="bt-out"></div>
+    </div>
+  </section>
+  <section class="card">
+    <h3>${escapeHtml(t("len_title"))}</h3>
+    <p class="note">${escapeHtml(t("len_note"))}</p>
+    <div class="tools">
+      <div class="row">
+        <div class="field"><label>${escapeHtml(t("min"))}</label><input id="len-min" type="number" min="1" max="99" value="4"></div>
+        <div class="field"><label>${escapeHtml(t("max"))}</label><input id="len-max" type="number" min="1" max="99" value="8"></div>
+      </div>
+      <div id="len-out" class="row"></div>
+    </div>
+  </section>`;
+}
+
+function expandEscapes(s) {
+  return s.replace(/\\x([0-9A-Fa-f]{2})/g, (_, h) => String.fromCharCode(parseInt(h,16)))
+          .replace(/\\n/g, "\n").replace(/\\r/g, "\r").replace(/\\t/g, "\t");
+}
+function padHexLen(n) { return n.toString(16).toUpperCase().padStart(2,"0"); }
+function showGenerated(target, command, qr=false) {
+  document.getElementById(target).innerHTML = `<div class="barcode-stage">${renderBarcode(command, qr)}<div class="human">${escapeHtml(visibleCode(command))}</div></div>`;
+}
+function wireTools() {
+  const on = (id, fn) => document.getElementById(id)?.addEventListener("click", fn);
+  on("btn-edit", () => {
+    const kind = document.getElementById("edit-kind").value;
+    const raw = expandEscapes(document.getElementById("edit-text").value);
+    if (!raw) return;
+    const cmd = `$DATA#${kind}0${padHexLen(raw.length)}${raw}#`;
+    showGenerated("edit-out", cmd, cmd.length > 32);
+  });
+  on("btn-hide", () => {
+    const kind = document.getElementById("hide-kind").value;
+    const start = document.getElementById("hide-start").value.toUpperCase().padStart(2,"0");
+    const len = document.getElementById("hide-len").value.toUpperCase().padStart(2,"0");
+    const cmd = kind === "4" ? `$DATA#400${start}${len}#` : `$DATA#${kind}0${len}#`;
+    showGenerated("hide-out", cmd, true);
+  });
+  on("btn-rep", () => {
+    const from = expandEscapes(document.getElementById("rep-from").value);
+    const to = expandEscapes(document.getElementById("rep-to").value);
+    if (!from) return;
+    const cmd = `$DATA#70${padHexLen(from.length)}${from}${padHexLen(to.length)}${to}#`;
+    showGenerated("rep-out", cmd, true);
+  });
+  on("btn-bt", () => {
+    const name = document.getElementById("bt-name").value.trim();
+    if (!name) return;
+    showGenerated("bt-out", "AT+NAME=" + name, true);
+  });
+  const paintLen = () => {
+    const a = Math.max(0, Math.min(99, Number(document.getElementById("len-min").value)||0));
+    const b = Math.max(0, Math.min(99, Number(document.getElementById("len-max").value)||0));
+    const digits = [Math.floor(a/10), a%10, Math.floor(b/10), b%10].map(String);
+    document.getElementById("len-out").innerHTML = digits.map((d,i) =>
+      `<div class="barcode-stage" style="padding:8px">${renderBarcode("A"+d)}<div class="human">${i+1}. ${d}</div></div>`
+    ).join("");
+  };
+  document.getElementById("len-min")?.addEventListener("input", paintLen);
+  document.getElementById("len-max")?.addEventListener("input", paintLen);
+  paintLen();
+}
+
+function renderAll() {
+  const q = state.query.toLowerCase();
+  const rows = ALL_CODES.filter(e => !q || (e.label+" "+e.code+" "+e.cat+" "+(CODE_FR[e.code]||"")+" "+tr(e.cat)).toLowerCase().includes(q));
+  return `<h1 class="page-title">${escapeHtml(t("all_codes"))}</h1>
+    <p class="lede">${escapeHtml(t("all_lede", {n: String(rows.length)}))}</p>
+    <div id="all-stage" class="barcode-stage hidden"></div>
+    <div class="card" style="padding:0; overflow:auto">
+      <table style="width:100%; border-collapse:collapse; font-size:12.5px">
+        <thead><tr style="text-align:left; color:hsl(var(--muted-foreground))">
+          <th style="padding:8px 10px">${escapeHtml(t("col_page"))}</th><th>${escapeHtml(t("col_cat"))}</th><th>${escapeHtml(t("col_label"))}</th><th>${escapeHtml(t("col_cmd"))}</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map(e => `<tr class="all-row" data-code="${encodeURIComponent(e.code)}" data-qr="${e.qr?1:0}" style="border-top:1px solid hsl(var(--border)); cursor:pointer">
+            <td style="padding:6px 10px; color:hsl(var(--muted-foreground))">${e.page}</td>
+            <td>${escapeHtml(tr(e.cat))}</td>
+            <td>${escapeHtml(state.lang === "fr" ? (CODE_FR[e.code] || tr(e.label) || e.label) : e.label)}</td>
+            <td style="font-family:ui-monospace,monospace">${escapeHtml(visibleCode(e.code))}</td>
+          </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function bindCards(rootGroups) {
+  const main = document.getElementById("main");
+  main.querySelectorAll(".opt").forEach(btn => btn.onclick = () => {
+    const code = decodeURIComponent(btn.dataset.code);
+    const gid = btn.dataset.gid;
+    const g = rootGroups.find(x => x.id === gid);
+    const it = g.items.find(i => i.code === code);
+    selectItem(gid, it);
+  });
+  main.querySelectorAll(".barcode-stage").forEach(st => st.onclick = () => enlarge(st));
+}
+function renderMain() {
+  const main = document.getElementById("main");
+  if (state.query && state.cat !== "all") {
+    const groups = CATALOG.flatMap(c => filterCat(c).groups.map(g => ({...g, id: c.id+"-"+g.id, title: c.title+" · "+g.title})));
+    main.innerHTML = `<h1 class="page-title">${escapeHtml(t("search"))}</h1>
+      <p class="lede">${escapeHtml(t("search_lede", {n: String(groups.length), q: state.query}))}</p>
+      ${groups.map(groupCard).join("") || `<p class="empty">${escapeHtml(t("no_results"))}</p>`}`;
+    bindCards(groups);
+    return;
+  }
+  if (state.cat === "tools") { main.innerHTML = renderTools(); wireTools(); return; }
+  if (state.cat === "all") {
+    main.innerHTML = renderAll();
+    main.querySelectorAll(".all-row").forEach(row => row.onclick = () => {
+      const code = decodeURIComponent(row.dataset.code);
+      const stage = document.getElementById("all-stage");
+      stage.classList.remove("hidden");
+      stage.innerHTML = renderBarcode(code, row.dataset.qr==="1") + `<div class="human">${escapeHtml(visibleCode(code))}</div>`;
+      stage.scrollIntoView({behavior:"smooth", block:"nearest"});
+    });
+    return;
+  }
+  const cat = filterCat(CATALOG.find(c => c.id === state.cat) || CATALOG[0]);
+  main.innerHTML = `<h1 class="page-title">${escapeHtml(tr(cat.title))}</h1>
+    <p class="lede">${escapeHtml(tr(cat.hint || ""))}</p>
+    ${cat.groups.map(groupCard).join("") || `<p class="empty">${escapeHtml(t("no_results_short"))}</p>`}`;
+  bindCards(cat.groups);
+}
+
+function enlarge(stage) {
+  const ov = document.getElementById("overlay");
+  ov.innerHTML = `<div class="sheet">${stage.innerHTML}</div>`;
+  ov.classList.add("show");
+}
+
+function renderHistory() {
+  const ul = document.getElementById("hist");
+  if (!state.history.length) { ul.innerHTML = `<li class="empty" style="border:0">${escapeHtml(t("no_history"))}</li>`; return; }
+  ul.innerHTML = state.history.map((h,i) => `<li data-i="${i}">${escapeHtml(visibleCode(h.v))}<div class="note" style="margin:4px 0 0">${new Date(h.t).toLocaleTimeString()} · ${escapeHtml(analyze(h.v).join(" · "))}</div></li>`).join("");
+  ul.querySelectorAll("li[data-i]").forEach(li => li.onclick = () => {
+    const v = state.history[+li.dataset.i].v;
+    showResult(v, false);
+    const cap = document.getElementById("capture");
+    cap.value = v; cap.focus(); cap.select();
+  });
+}
+
+function keepCapture() {
+  if (!state.armed) return;
+  const input = document.getElementById("capture");
+  if (!input) return;
+  const a = document.activeElement;
+  if (a && a !== input && a.closest && a.closest("input, textarea, select") && a.id !== "capture") return;
+  if (a !== input) input.focus({ preventScroll: true });
+}
+
+function isTypingField(el) {
+  if (!el || el.id === "capture") return false;
+  return !!el.closest?.("input, textarea, select");
+}
+
+function showResult(value, store) {
+  if (store) {
+    state.history.unshift({ v: value, t: Date.now() });
+    state.history = state.history.slice(0, 50);
+    saveHist();
+    renderHistory();
+  }
+  const vis = document.getElementById("result-vis");
+  vis.classList.remove("hidden");
+  vis.textContent = value ? visibleCode(value) : t("waiting");
+  vis.classList.remove("flash"); void vis.offsetWidth; vis.classList.add("flash");
+  document.getElementById("kvs").innerHTML = analyze(value).map(t => `<span class="badge">${t}</span>`).join("")
+    + (value ? `<span class="badge">hex ${hexdump(value)}</span>` : "");
+}
+
+function setupCapture() {
+  const input = document.getElementById("capture");
+  let idle = null;
+  let committed = false;
+  let lastValue = "";
+  let lastAt = 0;
+  const IDLE = 120;
+  function commit() {
+    clearTimeout(idle);
+    idle = null;
+    const v = input.value.replace(/(?:\r\n|\r|\n)+$/g, "");
+    if (!v) return;
+    const now = Date.now();
+    if (v === lastValue && now - lastAt < 700) {
+      committed = true;
+      input.value = "";
+      input.focus();
+      return;
+    }
+    lastValue = v;
+    lastAt = now;
+    committed = true;
+    showResult(v, true);
+    input.value = "";
+    input.focus();
+  }
+  function beginNewScan(firstChar) {
+    committed = false;
+    input.value = firstChar || "";
+  }
+  function arm() {
+    keepCapture();
+    input.classList.toggle("armed", state.armed);
+  }
+  input.addEventListener("keydown", (e) => {
+    if (!state.armed) return;
+    if (e.key === "Enter" || e.key === "Tab") {
+      e.preventDefault();
+      commit();
+      return;
+    }
+    if (committed && e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+      beginNewScan();
+    }
+  });
+  input.addEventListener("input", () => {
+    if (!state.armed) return;
+    if (committed) {
+      const last = input.value.slice(-1);
+      beginNewScan(last);
+    }
+    clearTimeout(idle);
+    idle = setTimeout(commit, IDLE);
+  });
+  document.getElementById("arm").addEventListener("change", (e) => {
+    state.armed = e.target.checked;
+    input.classList.toggle("armed", state.armed);
+    if (state.armed) arm();
+  });
+  document.getElementById("copy-result").onclick = async () => {
+    const v = lastValue || input.value;
+    try { await navigator.clipboard.writeText(v); } catch {
+      input.select(); document.execCommand("copy");
+    }
+  };
+  document.getElementById("clear-hist").onclick = () => { state.history = []; saveHist(); renderHistory(); };
+  document.getElementById("select-result").onclick = () => {
+    const v = lastValue || "";
+    if (!v) return;
+    try { navigator.clipboard.writeText(v); } catch { /* ignore */ }
+    keepCapture();
+  };
+  document.addEventListener("pointerdown", (e) => {
+    if (!state.armed) return;
+    if (isTypingField(e.target)) return;
+    if (e.target.closest("button, .opt, a, .nav-btn, .barcode-stage, .all-row, .history li, label, .sheet")) {
+      e.preventDefault();
+    }
+  }, true);
+  document.addEventListener("click", () => {
+    if (!state.armed) return;
+    requestAnimationFrame(keepCapture);
+  }, true);
+  document.addEventListener("focusin", (e) => {
+    if (!state.armed) return;
+    if (e.target.id === "capture" || isTypingField(e.target)) return;
+    keepCapture();
+  });
+  document.addEventListener("focusout", () => { setTimeout(keepCapture, 0); });
+  window.addEventListener("focus", keepCapture);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) keepCapture(); });
+  arm();
+}
+
+function render() {
+  renderNav();
+  renderMain();
+  keepCapture();
+}
+
+document.getElementById("overlay").onclick = (e) => { if (e.target.id === "overlay") e.currentTarget.classList.remove("show"); };
+document.getElementById("q").addEventListener("input", (e) => {
+  state.query = e.target.value;
+  document.getElementById("search-wrap").classList.toggle("has-query", !!state.query);
+  render();
+});
+document.getElementById("q-clear").addEventListener("click", () => {
+  const q = document.getElementById("q");
+  q.value = "";
+  state.query = "";
+  document.getElementById("search-wrap").classList.remove("has-query");
+  render();
+  keepCapture();
+});
+document.getElementById("lang-btn").onclick = () => {
+  state.lang = state.lang === "fr" ? "en" : "fr";
+  localStorage.setItem("c750-lang", state.lang);
+  updateChrome();
+  render();
+  renderHistory();
+};
+document.addEventListener("keydown", (e) => {
+  if (e.key === "/" && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
+    e.preventDefault(); document.getElementById("q").focus();
+  }
+});
+updateChrome();
+render();
+setupCapture();
+renderHistory();
+</script>
 </body>
 </html>
